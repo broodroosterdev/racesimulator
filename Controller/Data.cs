@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
 using Model;
 namespace Controller
 {
     static class Data
     {
         static Competition Competition { get; set; }
-
+        static Race CurrentRace { get; set; }
         public static void Initialize()
         {
             Competition = new Competition();
@@ -54,6 +51,13 @@ namespace Controller
                 SectionType = SectionTypes.RightCorner
             });
             Competition.Tracks.Enqueue(SilverSteen);
+        }
+
+        public static void NextRace()
+        {
+            Track track = Competition.NextTrack();
+            if (track != null)
+                CurrentRace = new Race(track, Competition.Participants);
         }
     }
 }
