@@ -10,7 +10,7 @@ namespace Model
         public Queue<Track> Tracks { get; set; }
         public Track NextTrack()
         {
-            return Tracks.Dequeue();
+            throw new NotImplementedException();    
         }
     }
 }
