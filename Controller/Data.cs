@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using Model;
 namespace Controller
 {
-    static class Data
+    public static class Data
     {
-        static Competition Competition { get; set; }
-        static Race CurrentRace { get; set; }
+        public static Competition Competition { get; set; }
+        public static Race CurrentRace { get; set; }
         public static void Initialize()
         {
             Competition = new Competition();
+            AddParticipants();
+            AddTracks();
         }
 
         public static void AddParticipants()

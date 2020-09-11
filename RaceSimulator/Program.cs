@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Controller;
+using System;
+using System.Threading;
 
 namespace RaceSimulator
 {
@@ -6,7 +8,13 @@ namespace RaceSimulator
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Data.Initialize();
+            Data.NextRace();
+            Console.WriteLine(Data.CurrentRace.Track.Name);
+            for(; ; )
+            {
+                Thread.Sleep(100);
+            }
         }
     }
 }
