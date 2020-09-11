@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Model
 {
-    interface IParticipant
+    public interface IParticipant
     {
         string Name { get; set; }
         int Points { get; set; }

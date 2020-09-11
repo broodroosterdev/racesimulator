@@ -4,7 +4,12 @@ using System.Text;
 
 namespace Model
 {
-    class SectionTypes
+    public enum SectionTypes
     {
+        Straight,
+        LeftCorner,
+        RightCorner,
+        StartGrid,
+        Finish
     }
 }

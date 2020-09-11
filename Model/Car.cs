@@ -6,9 +6,13 @@ namespace Model
 {
     class Car : IEquipment
     {
-        public int Quality { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int Performance { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int Speed { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsBroken { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        private int _quality;
+        public int Quality { get => _quality; set => _quality = value; }
+        private int _performance;
+        public int Performance { get => _performance; set => _performance = value; }
+        private int _speed;
+        public int Speed { get => _speed; set => _speed = value; }
+        private bool _isBroken;
+        public bool IsBroken { get => _isBroken; set => _isBroken = value; }
     }
 }
