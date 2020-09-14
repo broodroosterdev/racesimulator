@@ -13,5 +13,22 @@ namespace Model
             Name = name;
             Sections = sections;
         }
+
+        public Track(string name, SectionTypes[] sections)
+        {
+            Name = name;
+            Sections = _sectionsToList(sections);
+        }
+
+        private LinkedList<Section> _sectionsToList(SectionTypes[] sections)
+        {
+            LinkedList<Section> sectionList = new LinkedList<Section>();
+            foreach (SectionTypes type in sections)
+            {
+                sectionList.AddLast(new Section{SectionType = type});
+            }
+
+            return sectionList;
+        }
     }
 }
