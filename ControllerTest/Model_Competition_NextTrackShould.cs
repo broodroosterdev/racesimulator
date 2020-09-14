@@ -1,8 +1,6 @@
-﻿using Model;
+﻿using System.Collections.Generic;
+using Model;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ControllerTest
 {
@@ -22,6 +20,15 @@ namespace ControllerTest
         {
             var result = _competition.NextTrack();
             Assert.IsNull(result);
+        }
+
+        [Test]
+        public void NextTrack_OneInQueue_ReturnTrack()
+        {
+            var track = new Track("Test", new LinkedList<Section>());
+            _competition.Tracks.Enqueue(track);
+            var result = _competition.NextTrack();
+            Assert.AreEqual(track, result);
         }
     }
 }

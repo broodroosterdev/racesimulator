@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Model
 {
@@ -12,8 +10,7 @@ namespace Model
         {
             if (Tracks.Count > 0)
                 return Tracks.Dequeue();
-            else
-                return null;
+            return null;
         }
     }
 }
