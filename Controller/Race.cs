@@ -1,7 +1,9 @@
 ﻿using Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Timers;
 
 namespace Controller
 {
@@ -12,6 +14,7 @@ namespace Controller
         public DateTime StartTime { get; set; }
         private Random _random;
         private Dictionary<Section, SectionData> _positions;
+        private Timer _timer = new Timer(500);
 
         public Race(Track track, List<IParticipant> participants)
         {
@@ -21,6 +24,12 @@ namespace Controller
             _positions = new Dictionary<Section, SectionData>();
             RandomizeEquipment();
             GiveStartPositions();
+            _timer.Elapsed += OnTimedEvent;
+        }
+
+        public void Start()
+        {
+            _timer.Enabled = true;
         }
         
         public SectionData GetSectionData(Section section)
@@ -31,6 +40,11 @@ namespace Controller
                 
             }
             return _positions[section];
+        }
+
+        public void OnTimedEvent(Object source, EventArgs e)
+        {
+            //Console.WriteLine("Timer fired event");
         }
 
         public void RandomizeEquipment()
@@ -44,14 +58,17 @@ namespace Controller
 
         public void GiveStartPositions()
         {
-            var sortedParticipants = Participants; 
+            //Create copy to avoid sorting Participants itself
+            var sortedParticipants = Participants;
+            //Sort based on performance
             sortedParticipants.Sort((participant1, participant2) => participant1.Equipment.Performance.CompareTo(participant2.Equipment.Performance)); 
+            //Find finish section
             var iterator = Track.Sections.First;
             while (iterator.Value.SectionType != SectionTypes.Finish)
             {
                 iterator = iterator.Next;
             }
-
+            //Move to startgrid before finish
             iterator = iterator.Previous;
             foreach(IParticipant participant in sortedParticipants)
             {
