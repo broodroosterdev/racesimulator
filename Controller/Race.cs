@@ -1,6 +1,7 @@
 ﻿using Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Controller
 {
@@ -18,6 +19,8 @@ namespace Controller
             Participants = participants;
             _random = new Random(DateTime.Now.Millisecond);
             _positions = new Dictionary<Section, SectionData>();
+            RandomizeEquipment();
+            GiveStartPositions();
         }
         
         public SectionData GetSectionData(Section section)
@@ -39,5 +42,32 @@ namespace Controller
             }
         }
 
+        public void GiveStartPositions()
+        {
+            var sortedParticipants = Participants; 
+            sortedParticipants.Sort((participant1, participant2) => participant1.Equipment.Performance.CompareTo(participant2.Equipment.Performance)); 
+            var iterator = Track.Sections.First;
+            while (iterator.Value.SectionType != SectionTypes.Finish)
+            {
+                iterator = iterator.Next;
+            }
+            foreach(IParticipant participant in sortedParticipants)
+            {
+                var data = GetSectionData(iterator.Value);
+                if (data.Left == null)
+                {
+                    data.Left = participant;
+                } else if (data.Right == null)
+                {
+                    data.Right = participant;
+                }
+                else
+                {
+                    iterator = iterator.Previous;
+                    data = GetSectionData(iterator.Value);
+                    data.Left = participant;
+                }
+            }
+        }
     }
 }

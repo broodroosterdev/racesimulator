@@ -18,41 +18,31 @@ namespace Controller
         {
             Competition.Participants = new List<IParticipant>
             {
-                new Driver(),
-                new Driver(),
-                new Driver()
+                new Driver(){Equipment = new Car(), Name = "Wando Worris"},
+                new Driver(){Equipment = new Car(), Name = "Daniel Risotto"},
+                new Driver(){Equipment = new Car(), Name = "Max Verslapen"}
             };
         }
 
         public static void AddTracks()
         {
             Competition.Tracks = new Queue<Track>();
-            Track SilverSteen = new Track("SilverSteen", new LinkedList<Section>());
-            SilverSteen.Sections.AddLast(new Section
+            Track SilverSteen = new Track("SilverSteen", new SectionTypes[]
             {
-                SectionType = SectionTypes.StartGrid
-            });
-            SilverSteen.Sections.AddLast(new Section
-            {
-                SectionType = SectionTypes.RightCorner
-            });
-            SilverSteen.Sections.AddLast(new Section
-            {
-                SectionType = SectionTypes.RightCorner
-            });
-            SilverSteen.Sections.AddLast(new Section
-            {
-                SectionType = SectionTypes.Straight
-            });
-            SilverSteen.Sections.AddLast(new Section
-            {
-                SectionType = SectionTypes.RightCorner
-            });
-            SilverSteen.Sections.AddLast(new Section
-            {
-                SectionType = SectionTypes.RightCorner
+                SectionTypes.StartGrid,
+                SectionTypes.StartGrid,
+                SectionTypes.Finish,
+                SectionTypes.RightCorner,
+                SectionTypes.RightCorner,
+                SectionTypes.Straight,
+                SectionTypes.Straight,
+                SectionTypes.Straight,
+                SectionTypes.RightCorner,
+                SectionTypes.RightCorner
             });
             Competition.Tracks.Enqueue(SilverSteen);
+            Track elburg = new Track("Circuit Elburg", new SectionTypes[] { SectionTypes.StartGrid, SectionTypes.StartGrid, SectionTypes.StartGrid, SectionTypes.Finish, SectionTypes.RightCorner, SectionTypes.Straight, SectionTypes.LeftCorner, SectionTypes.Straight, SectionTypes.RightCorner, SectionTypes.RightCorner, SectionTypes.Straight, SectionTypes.LeftCorner, SectionTypes.RightCorner, SectionTypes.Straight, SectionTypes.LeftCorner, SectionTypes.RightCorner, SectionTypes.RightCorner, SectionTypes.LeftCorner, SectionTypes.Straight, SectionTypes.RightCorner, SectionTypes.Straight, SectionTypes.Straight, SectionTypes.Straight, SectionTypes.RightCorner });
+            Competition.Tracks.Enqueue(elburg);
         }
 
         public static void NextRace()
