@@ -51,8 +51,12 @@ namespace Controller
             {
                 iterator = iterator.Next;
             }
+
+            iterator = iterator.Previous;
             foreach(IParticipant participant in sortedParticipants)
             {
+                if (iterator.Value.SectionType != SectionTypes.StartGrid)
+                    break;
                 var data = GetSectionData(iterator.Value);
                 if (data.Left == null)
                 {
@@ -61,8 +65,9 @@ namespace Controller
                 {
                     data.Right = participant;
                 }
-                else
+                else if(iterator.Previous != null)
                 {
+
                     iterator = iterator.Previous;
                     data = GetSectionData(iterator.Value);
                     data.Left = participant;

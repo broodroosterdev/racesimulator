@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
+using Controller;
 using Model;
 
 namespace RaceSimulator
@@ -14,72 +12,72 @@ namespace RaceSimulator
         private static string[] _straightHorizontal =
         {
             "--------", 
-            "        ",
-            "        ",
+            "     1  ",
+            "    2   ",
             "--------",
         };
         private static string[] _straightVertical =
         {
             "|     |", 
-            "|     |", 
-            "|     |", 
+            "| 1   |", 
+            "|   2 |", 
             "|     |"
         };
         private static string[] _rightHorizontal =
         {
             "----\\  ", 
             "     \\ ", 
-            "      \\", 
-            "\\     |"
+            "  2   \\", 
+            "\\   1 |"
         };
         private static string[] _rightVertical =
         {
             "  /-----",
-            " /      ",
+            " /   1  ",
             "/       ",
-            "|     /-"
+            "|   2 /-"
         };
         private static string[] _leftHorizontal =
         {
             "/     |",
-            "      /",
-            "     / ",
+            "    2 /",
+            " 1   / ",
             "----/  "
         };
         private static string[] _leftVertical =
         {
-            "|     \\-",
+            "|   2 \\-",
             "\\      ",
-            " \\     ",
+            " \\ 1   ",
             "  \\-----",
         };
         private static string[] _finishHorizontal =
         {
             "--------",
-            "      # ",
-            "      # ",
+            "    1 # ",
+            "   2  # ",
             "--------",
         };
         private static string[] _finishVertical =
         {
             "|     |", 
             "| # # |", 
-            "|     |", 
-            "|     |"
+            "| 1   |", 
+            "|   2 |"
         };
         private static string[] _startHorizontal =
         {
             "--------",
-            "     |  ", 
-            "     |  ",
+            "    1|  ", 
+            "   2 |  ",
             "--------",
         };
         private static string[] _startVertical =
         {
             "|     |", 
             "| - - |", 
-            "|     |", 
-            "|     |"
+            "| 1   |", 
+            "|   2 |"
         };
         #endregion
 
@@ -99,23 +97,39 @@ namespace RaceSimulator
                 {
                     if(tiles[x] != null)
                         //Add 1 to the y to make space for name of Track
-                        DrawSection(tiles[x].Type, tiles[x].Direction, x, y + 1);
+                        DrawSection(tiles[x], x, y + 1);
                 }
             }
-            
         }
 
-        private static void DrawSection(SectionTypes type, int direction, int x, int y)
+        private static void DrawSection(SectionInfo sectonInfo, int x, int y)
         {
-            var ascii = GetAscii(type, direction);
+            var ascii = GetAscii(sectonInfo.Type, sectonInfo.Direction);
+            var data = Data.CurrentRace.GetSectionData(sectonInfo.Section);
             x = x * 8;
             y = y * 4;
             foreach (string line in ascii)
             {
                 Console.SetCursorPosition(x, y);
-                Console.Write(line);
+                var placedLine = PlaceParticipants(line, data.Left, data.Right);
+                Console.Write(placedLine);
                 y++;
             }
+        }
+
+        private static string PlaceParticipants(string ascii, IParticipant left, IParticipant right)
+        {
+            string leftPosition;
+            if (left != null)
+                leftPosition = left.Name[0].ToString();
+            else
+                leftPosition = " ";
+            string rightPosition;
+            if (right != null)
+                rightPosition = right.Name[0].ToString();
+            else
+                rightPosition = " ";
+            return ascii.Replace("1", leftPosition).Replace("2", rightPosition);
         }
 
         private static string[] GetAscii(SectionTypes type, int direction)
@@ -156,7 +170,6 @@ namespace RaceSimulator
                                     break;
                                 }
                         }
-
                         break;
                     }
                 case SectionTypes.RightCorner:
@@ -184,23 +197,66 @@ namespace RaceSimulator
                                     break;
                                 }
                         }
-
                         break;
                     }
                 case SectionTypes.StartGrid:
                     {
-                        if (direction % 2 != 0)
+                        switch (direction)
+                        {
+                            case 0:
+                            {
+                                ascii = _startVertical;
+                                break;
+                            }
+                            case 1:
+                            {
+                                ascii = _startHorizontal;
+                                break;
+                            }
+                            case 2:
+                            {
+                                ascii = _startVertical.Reverse().ToArray();
+                                break;
+                            }
+                            case 3:
+                            {
+                                ascii = _startHorizontal.Reverse().ToArray();
+                                break;
+                            }
+                        }
+                        /*if (direction % 2 != 0)
                             ascii = _startHorizontal;
                         else
                             ascii = _startVertical;
+                        */
                         break;
+                        
                     }
                 case SectionTypes.Finish:
                     {
-                        if (direction % 2 != 0)
-                            ascii = _finishHorizontal;
-                        else
-                            ascii = _finishVertical;
+                        switch (direction)
+                        {
+                            case 0:
+                            {
+                                ascii = _finishVertical;
+                                break;
+                            }
+                            case 1:
+                            {
+                                ascii = _finishHorizontal;
+                                break;
+                            }
+                            case 2:
+                            {
+                                ascii = _finishVertical.Reverse().ToArray();
+                                break;
+                            }
+                            case 3:
+                            {
+                                ascii = _finishHorizontal.Reverse().ToArray();
+                                break;
+                            }
+                        }
                         break;
                     }
             }
@@ -229,6 +285,7 @@ namespace RaceSimulator
                 {
                     Direction = direction,
                     Type = iterator.Value.SectionType,
+                    Section = iterator.Value
                 };
 
                 //Change direction
@@ -312,6 +369,7 @@ namespace RaceSimulator
     {
         public SectionTypes Type { get; set; }
         public int Direction { get; set; }
+        public Section Section { get; set; }
 
         public static Direction IntToDirection(int direction)
         {
