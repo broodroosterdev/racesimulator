@@ -83,7 +83,7 @@ namespace RaceSimulator
 
         public static void Initialize()
         {
-
+            Data.CurrentRace.driversChanged += OnDriversChanged;
         }
 
         public static void DrawTrack(Track track)
@@ -100,6 +100,11 @@ namespace RaceSimulator
                         DrawSection(tiles[x], x, y + 1);
                 }
             }
+        }
+
+        public static void OnDriversChanged(object model, DriversChangedEventArgs e)
+        {
+            DrawTrack(e.Track);
         }
 
         private static void DrawSection(SectionInfo sectonInfo, int x, int y)

@@ -9,12 +9,17 @@ namespace Controller
 {
     public class Race
     {
+        public delegate void DriversChanged(object model, DriversChangedEventArgs e);
+
+        public event DriversChanged driversChanged;
         public Track Track { get; set; }
         public List<IParticipant> Participants { get; set; }
         public DateTime StartTime { get; set; }
+
         private Random _random;
         private Dictionary<Section, SectionData> _positions;
         private Timer _timer = new Timer(500);
+
 
         public Race(Track track, List<IParticipant> participants)
         {
@@ -46,6 +51,8 @@ namespace Controller
         {
             //Console.WriteLine("Timer fired event");
         }
+
+
 
         public void RandomizeEquipment()
         {
