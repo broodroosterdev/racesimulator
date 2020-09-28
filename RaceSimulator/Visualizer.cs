@@ -40,8 +40,8 @@ namespace RaceSimulator
         private static string[] _leftHorizontal =
         {
             "/     |",
-            "    2 /",
-            " 1   / ",
+            " 2    /",
+            "   1 / ",
             "----/  "
         };
         private static string[] _leftVertical =
@@ -83,17 +83,19 @@ namespace RaceSimulator
 
         public static void Initialize()
         {
-            Data.CurrentRace.driversChanged += OnDriversChanged;
+            Data.CurrentRace.DriversChanged += OnDriversChanged;
         }
 
         public static void DrawTrack(Track track)
         {
             var grid = GenerateGrid(track.Sections);
+            Console.CursorVisible = false;
+            Console.SetCursorPosition(0,0);
             Console.WriteLine(track.Name);
-            for (int y = 0; y < grid.Count; y++)
+            for (int y = grid.Count - 1; y >= 0; y--)
             {
                 var tiles = grid[y];
-                for (int x = 0; x < tiles.Count; x++)
+                for (int x = tiles.Count - 1; x >= 0; x--)
                 {
                     if(tiles[x] != null)
                         //Add 1 to the y to make space for name of Track
@@ -144,10 +146,29 @@ namespace RaceSimulator
             {
                 case SectionTypes.Straight:
                     {
-                        if (direction % 2 != 0)
-                            ascii = _straightHorizontal;
-                        else
-                            ascii = _straightVertical;
+                        switch (direction)
+                        {
+                            case 0:
+                            {
+                                ascii = _straightVertical;
+                                break;
+                            }
+                            case 1:
+                            {
+                                ascii = _straightHorizontal;
+                                break;
+                            }
+                            case 2:
+                            {
+                                ascii = _straightVertical.Reverse().ToArray();
+                                break;
+                            }
+                            case 3:
+                            {
+                                ascii = _straightHorizontal.Reverse().ToArray();
+                                break;
+                            }
+                        }
                         break;
                     }
                 case SectionTypes.LeftCorner:
