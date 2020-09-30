@@ -91,7 +91,8 @@ namespace RaceSimulator
             var grid = GenerateGrid(track.Sections);
             Console.CursorVisible = false;
             Console.SetCursorPosition(0,0);
-            Console.WriteLine(track.Name);
+            Console.Write(track.Name);
+            Console.WriteLine();
             for (int y = grid.Count - 1; y >= 0; y--)
             {
                 var tiles = grid[y];
@@ -250,13 +251,8 @@ namespace RaceSimulator
                                 break;
                             }
                         }
-                        /*if (direction % 2 != 0)
-                            ascii = _startHorizontal;
-                        else
-                            ascii = _startVertical;
-                        */
+
                         break;
-                        
                     }
                 case SectionTypes.Finish:
                     {
