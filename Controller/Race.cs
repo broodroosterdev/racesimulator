@@ -41,6 +41,13 @@ namespace Controller
             _timer.Enabled = true;
         }
 
+
+        public void CleanUp()
+        {
+            _timer.Enabled = false;
+            DriversChanged = null;
+        }
+
         public SectionData GetSectionData(Section section)
         {
             if (!_positions.ContainsKey(section))
@@ -77,6 +84,9 @@ namespace Controller
             if (FinishedParticipants == Participants.Count)
             {
                 //Start new race using event
+                CleanUp();
+                Console.SetCursorPosition(0,0);
+                Console.WriteLine("Race ended" + new string(' ', Console.WindowWidth));
             }
             else
             {
