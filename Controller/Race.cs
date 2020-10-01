@@ -13,6 +13,11 @@ namespace Controller
         public delegate void DriversChangedEvent(object model, DriversChangedEventArgs e);
 
         public event DriversChangedEvent DriversChanged;
+
+        public delegate void RaceEndedEvent(object model);
+
+        public event RaceEndedEvent RaceEnded;
+
         public Track Track { get; set; }
         public List<IParticipant> Participants { get; set; }
         public DateTime StartTime { get; set; }
@@ -87,6 +92,8 @@ namespace Controller
                 CleanUp();
                 Console.SetCursorPosition(0,0);
                 Console.WriteLine("Race ended" + new string(' ', Console.WindowWidth));
+                RaceEnded?.Invoke(this);
+                RaceEnded = null;
             }
             else
             {

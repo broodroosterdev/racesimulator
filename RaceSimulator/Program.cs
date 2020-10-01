@@ -13,8 +13,7 @@ namespace RaceSimulator
             Data.NextRace();
             //Data.NextRace();
             Visualizer.Initialize();
-            Visualizer.DrawTrack(Data.CurrentRace.Track);
-            Data.CurrentRace.Start();
+            
             for(; ; )
             {
                 Thread.Sleep(100);
