@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Timers;
 
 namespace Controller
@@ -25,9 +27,9 @@ namespace Controller
         private Random _random;
         private Dictionary<Section, SectionData> _positions;
         public Dictionary<IParticipant, int> _rondjes;
-        private Timer _timer = new Timer(500);
+        private Timer _timer = new Timer(200);
 
-        public const int AANTAL_RONDJES = 1;
+        public const int AANTAL_RONDJES = 2;
         public int FinishedParticipants { get; set; } = 0;
         public Race(Track track, List<IParticipant> participants)
         {
@@ -90,7 +92,7 @@ namespace Controller
             {
                 //Start new race using event
                 CleanUp();
-                Console.SetCursorPosition(0,0);
+                Console.SetCursorPosition(0, 0);
                 Console.WriteLine("Race ended" + new string(' ', Console.WindowWidth));
                 RaceEnded?.Invoke(this);
                 RaceEnded = null;
@@ -100,7 +102,9 @@ namespace Controller
                 var driverChanged = MoveDrivers();
                 if (driverChanged)
                 {
+                    _timer.Enabled = false;
                     DriversChanged?.Invoke(this, new DriversChangedEventArgs() { Track = this.Track });
+                    _timer.Enabled = true;
                 }
             }
         }
@@ -116,8 +120,11 @@ namespace Controller
                 if (data.Left != null)
                 {
                     var equipment = data.Left.Equipment;
-                    data.DistanceLeft += equipment.Performance * equipment.Speed;
-                    if (data.DistanceLeft > 50)
+
+                    TryToBreak(data.Left, ref driverChanged);
+                    if (!equipment.IsBroken)
+                        data.DistanceLeft += equipment.Performance * equipment.Speed;
+                    if (!equipment.IsBroken && data.DistanceLeft > 50)
                     {
                         if (!hasFinished(data.Left))
                         {
@@ -173,8 +180,10 @@ namespace Controller
                 if (data.Right != null)
                 {
                     var equipment = data.Right.Equipment;
-                    data.DistanceRight += equipment.Performance * equipment.Speed;
-                    if (data.DistanceRight > 50)
+                    TryToBreak(data.Right, ref driverChanged);
+                    if (!equipment.IsBroken)
+                        data.DistanceRight += equipment.Performance * equipment.Speed;
+                    if (!equipment.IsBroken && data.DistanceRight > 50)
                     {
                         if (!hasFinished(data.Right))
                         {
@@ -236,9 +245,28 @@ namespace Controller
         {
             foreach (IParticipant participant in Participants)
             {
-                participant.Equipment.Quality = _random.Next(1, 100);
+                participant.Equipment.Quality = _random.Next(20, 100);
                 participant.Equipment.Performance = _random.Next(1, 3);
                 participant.Equipment.Speed = _random.Next(5, 15);
+            }
+        }
+
+        public void TryToBreak(IParticipant participant, ref bool changed)
+        {
+
+            IEquipment equipment = participant.Equipment;
+            int random = _random.Next(0, equipment.Quality * 2);
+            if (random <= 1)
+            {
+                if (!equipment.IsBroken)
+                {
+                    if(equipment.Speed > 20)
+                        equipment.Speed -= 10;
+                    equipment.Performance = 1;
+                }
+
+                equipment.IsBroken = !equipment.IsBroken;
+                changed = true;
             }
         }
 

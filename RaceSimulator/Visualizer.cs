@@ -129,13 +129,20 @@ namespace RaceSimulator
             foreach (string line in ascii)
             {
                 Console.SetCursorPosition(x, y);
-                var placedLine = PlaceParticipants(line, data.Left, data.Right);
-                Console.Write(placedLine);
+                if (line.Contains("1") || line.Contains("2"))
+                {
+                    PrintSectionWithParticipants(line, data.Left, data.Right);
+                }
+                else
+                {
+                    Console.Write(line);
+                }
+
                 y++;
             }
         }
 
-        private static string PlaceParticipants(string ascii, IParticipant left, IParticipant right)
+        private static void PrintSectionWithParticipants(string ascii, IParticipant left, IParticipant right)
         {
             string leftPosition;
             if (left != null)
@@ -147,7 +154,30 @@ namespace RaceSimulator
                 rightPosition = right.Name[0].ToString();
             else
                 rightPosition = " ";
-            return ascii.Replace("1", leftPosition).Replace("2", rightPosition);
+            foreach (char character in ascii)
+            {
+                if (character == '1')
+                {
+                    if (left != null && left.Equipment.IsBroken)
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    else
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write(leftPosition);
+                    Console.ForegroundColor = ConsoleColor.White;
+                } else if (character == '2')
+                {
+                    if (right != null && right.Equipment.IsBroken)
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    else
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write(rightPosition);
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.Write(character);
+                }
+            } 
         }
 
         private static string[] GetAscii(SectionTypes type, int direction)
