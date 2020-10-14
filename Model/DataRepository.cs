@@ -8,6 +8,8 @@ namespace Model
     {
         private List<T> _list = new List<T>();
 
+        public int Count => _list.Count;
+
         public void AddValue(T value)
         {
             _list.Add(value);

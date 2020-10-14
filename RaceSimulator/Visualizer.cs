@@ -116,6 +116,8 @@ namespace RaceSimulator
 
         public static void OnRaceEnded(object model)
         {
+            var result = Data.CurrentRace.GetRaceResult();
+            Data.Competition.GivePoints(result);    
             Data.NextRace();
             Initialize();
         }

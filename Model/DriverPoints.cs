@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Model
 {
-    class DriverPoints
+    public class DriverPoints
     {
         public String Name { get; set; }
         public int Points { get; set; }

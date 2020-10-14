@@ -12,6 +12,8 @@ namespace Controller
 {
     public class Race
     {
+        private const int AMOUNT_OF_ROUNDS = 2;
+
         public delegate void DriversChangedEvent(object model, DriversChangedEventArgs e);
 
         public event DriversChangedEvent DriversChanged;
@@ -26,11 +28,9 @@ namespace Controller
 
         private Random _random;
         private Dictionary<Section, SectionData> _positions;
-        public Dictionary<IParticipant, int> _rondjes;
+        private Dictionary<IParticipant, int> _rondjes;
         private Timer _timer = new Timer(200);
-
-        public const int AANTAL_RONDJES = 2;
-        public int FinishedParticipants { get; set; } = 0;
+        private List<LapTime> RaceResult = new List<LapTime>();
         public Race(Track track, List<IParticipant> participants)
         {
             Track = track;
@@ -46,6 +46,7 @@ namespace Controller
         public void Start()
         {
             _timer.Enabled = true;
+            StartTime = DateTime.Now;
         }
 
 
@@ -64,6 +65,11 @@ namespace Controller
             return _positions[section];
         }
 
+        public List<LapTime> GetRaceResult()
+        {
+            return RaceResult;
+        }
+
         public void IncreaseRondjes(IParticipant participant, Action<IParticipant> setter)
         {
             if (!_rondjes.ContainsKey(participant))
@@ -74,9 +80,13 @@ namespace Controller
             var rondjes = _rondjes[participant];
             rondjes++;
             _rondjes[participant] = rondjes;
-            if (rondjes >= AANTAL_RONDJES)
+            if (rondjes >= AMOUNT_OF_ROUNDS)
             {
-                FinishedParticipants++;
+                RaceResult.Add(new LapTime()
+                {
+                    Name = participant.Name,
+                    Time = DateTime.Now.Subtract(StartTime)
+                });
                 setter(null);
             }
         }
@@ -88,7 +98,7 @@ namespace Controller
 
         public void OnTimedEvent(Object source, EventArgs e)
         {
-            if (FinishedParticipants == Participants.Count)
+            if (RaceResult.Count == Participants.Count)
             {
                 //Start new race using event
                 CleanUp();
@@ -253,10 +263,11 @@ namespace Controller
 
         public void TryToBreak(IParticipant participant, ref bool changed)
         {
-
+            //If the equipment is broken, make the chance it will get repaired higher
+            int chance = participant.Equipment.IsBroken ? 5 : 1;
             IEquipment equipment = participant.Equipment;
-            int random = _random.Next(0, equipment.Quality * 2);
-            if (random <= 1)
+            int random = _random.Next(0, equipment.Quality * 10);
+            if (random <= chance)
             {
                 if (!equipment.IsBroken)
                 {
