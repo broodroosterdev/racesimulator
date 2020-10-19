@@ -15,7 +15,7 @@ namespace Model
             return null;
         }
 
-        public void GivePoints(List<LapTime> raceResult)
+        public void GivePoints(List<RaceTime> raceResult)
         {
             var points = 20;
             var result = new List<DriverPoints>();

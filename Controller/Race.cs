@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Timers;
+using Model.DataPoints;
 
 namespace Controller
 {
@@ -30,7 +31,11 @@ namespace Controller
         private Dictionary<Section, SectionData> _positions;
         private Dictionary<IParticipant, int> _rondjes;
         private Timer _timer = new Timer(200);
-        private List<LapTime> RaceResult = new List<LapTime>();
+        private List<RaceTime> _raceResult = new List<RaceTime>();
+        private DataRepository<SectionTime> _sectionResult = new DataRepository<SectionTime>();
+        private Dictionary<IParticipant, DateTime> _timeInSection = new Dictionary<IParticipant, DateTime>();
+        private DataRepository<Breakage> _breakages = new DataRepository<Breakage>();
+        private DataRepository<LaneSwitch> _laneSwitches = new DataRepository<LaneSwitch>();
         public Race(Track track, List<IParticipant> participants)
         {
             Track = track;
@@ -65,9 +70,9 @@ namespace Controller
             return _positions[section];
         }
 
-        public List<LapTime> GetRaceResult()
+        public List<RaceTime> GetRaceResult()
         {
-            return RaceResult;
+            return _raceResult;
         }
 
         public void IncreaseRondjes(IParticipant participant, Action<IParticipant> setter)
@@ -82,7 +87,7 @@ namespace Controller
             _rondjes[participant] = rondjes;
             if (rondjes >= AMOUNT_OF_ROUNDS)
             {
-                RaceResult.Add(new LapTime()
+                _raceResult.Add(new RaceTime()
                 {
                     Name = participant.Name,
                     Time = DateTime.Now.Subtract(StartTime)
@@ -90,15 +95,46 @@ namespace Controller
                 setter(null);
             }
         }
+        private TimeSpan GetSectionTime(IParticipant participant)
+        {
+            if (_timeInSection.TryGetValue(participant, out DateTime enteredTime))
+            {
+                return DateTime.Now.Subtract(enteredTime);
+            }
+            else
+            {
+                return DateTime.Now.Subtract(StartTime);
+            }
+        }
 
-        public bool hasFinished(IParticipant participant)
+        private void SetNewSectionTime(IParticipant participant)
+        {
+            if (_timeInSection.ContainsKey(participant))
+                _timeInSection[participant] = DateTime.Now;
+            else
+                _timeInSection.Add(participant, DateTime.Now);
+        }
+
+        public void RecordSectionTime(Section section, IParticipant participant)
+        {
+            var timeSpan = GetSectionTime(participant);
+            _sectionResult.AddValue(new SectionTime()
+            {
+                Name = participant.Name,
+                Section = section,
+                Time = timeSpan
+            });
+            SetNewSectionTime(participant);
+        }
+
+        public bool HasFinished(IParticipant participant)
         {
             return participant == null;
         }
 
-        public void OnTimedEvent(Object source, EventArgs e)
+        public void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            if (RaceResult.Count == Participants.Count)
+            if (_raceResult.Count == Participants.Count)
             {
                 //Start new race using event
                 CleanUp();
@@ -131,12 +167,12 @@ namespace Controller
                 {
                     var equipment = data.Left.Equipment;
 
-                    TryToBreak(data.Left, ref driverChanged);
+                    TryToBreak(data.Left, iterator.Value, ref driverChanged);
                     if (!equipment.IsBroken)
                         data.DistanceLeft += equipment.Performance * equipment.Speed;
                     if (!equipment.IsBroken && data.DistanceLeft > 50)
                     {
-                        if (!hasFinished(data.Left))
+                        if (!HasFinished(data.Left))
                         {
 
                             driverChanged = true;
@@ -160,10 +196,12 @@ namespace Controller
                                 nextData.DistanceLeft = newDistance;
                                 data.Left = null;
                                 data.DistanceLeft = 0;
+                                RecordSectionTime(iterator.Value, nextData.Left);
                                 if (iterator.Value.SectionType == SectionTypes.Finish)
                                 {
                                     IncreaseRondjes(nextData.Left, p => nextData.Left = p);
                                 }
+                                
                                 //Check if it can overtake on the right instead
                             }
                             else if (nextData.Right == null)
@@ -172,10 +210,13 @@ namespace Controller
                                 nextData.DistanceRight = newDistance;
                                 data.Left = null;
                                 data.DistanceLeft = 0;
+                                RecordSectionTime(iterator.Value, nextData.Right);
+                                _laneSwitches.AddValue(new LaneSwitch(nextData.Right.Name, iterator.Next.Value, Lane.Right));
                                 if (iterator.Value.SectionType == SectionTypes.Finish)
                                 {
                                     IncreaseRondjes(nextData.Right, p => nextData.Right = p);
                                 }
+                               
                             }
                             //If it cant overtake, set distance to 50 to check it next timer event
                             else
@@ -190,12 +231,12 @@ namespace Controller
                 if (data.Right != null)
                 {
                     var equipment = data.Right.Equipment;
-                    TryToBreak(data.Right, ref driverChanged);
+                    TryToBreak(data.Right, iterator.Value, ref driverChanged);
                     if (!equipment.IsBroken)
                         data.DistanceRight += equipment.Performance * equipment.Speed;
                     if (!equipment.IsBroken && data.DistanceRight > 50)
                     {
-                        if (!hasFinished(data.Right))
+                        if (!HasFinished(data.Right))
                         {
 
                             driverChanged = true;
@@ -217,11 +258,12 @@ namespace Controller
                                 nextData.DistanceRight = newDistance;
                                 data.Right = null;
                                 data.DistanceRight = 0;
+                                RecordSectionTime(iterator.Value, nextData.Right);
                                 if (iterator.Value.SectionType == SectionTypes.Finish)
                                 {
                                     IncreaseRondjes(nextData.Right, p => nextData.Right = p);
                                 }
-
+                               
                                 //Check if it can overtake on the right instead
                             }
                             else if (nextData.Left == null)
@@ -230,10 +272,13 @@ namespace Controller
                                 nextData.DistanceLeft = newDistance;
                                 data.Right = null;
                                 data.DistanceRight = 0;
+                                RecordSectionTime(iterator.Value, nextData.Left);
+                                _laneSwitches.AddValue(new LaneSwitch(nextData.Left.Name, iterator.Next.Value, Lane.Left));
                                 if (iterator.Value.SectionType == SectionTypes.Finish)
                                 {
                                     IncreaseRondjes(nextData.Left, p => nextData.Left = p);
                                 }
+                               
                             }
                             //If it cant overtake, set distance to 50 to check it next timer event
                             else
@@ -261,7 +306,7 @@ namespace Controller
             }
         }
 
-        public void TryToBreak(IParticipant participant, ref bool changed)
+        public void TryToBreak(IParticipant participant, Section section, ref bool changed)
         {
             //If the equipment is broken, make the chance it will get repaired higher
             int chance = participant.Equipment.IsBroken ? 5 : 1;
@@ -274,6 +319,10 @@ namespace Controller
                     if(equipment.Speed > 20)
                         equipment.Speed -= 10;
                     equipment.Performance = 1;
+                }
+                else
+                {
+                    _breakages.AddValue(new Breakage(participant.Name, section));
                 }
 
                 equipment.IsBroken = !equipment.IsBroken;

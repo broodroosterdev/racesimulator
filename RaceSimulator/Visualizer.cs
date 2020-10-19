@@ -126,8 +126,8 @@ namespace RaceSimulator
         {
             var ascii = GetAscii(sectonInfo.Type, sectonInfo.Direction);
             var data = Data.CurrentRace.GetSectionData(sectonInfo.Section);
-            x = x * 8;
-            y = y * 4;
+            x *= 8;
+            y *= 4;
             foreach (string line in ascii)
             {
                 Console.SetCursorPosition(x, y);

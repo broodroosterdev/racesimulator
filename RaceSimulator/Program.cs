@@ -11,7 +11,6 @@ namespace RaceSimulator
         {
             Data.Initialize();
             Data.NextRace();
-            //Data.NextRace();
             Visualizer.Initialize();
             
             for(; ; )
