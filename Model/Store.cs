@@ -5,9 +5,8 @@ using Model.DataPoints;
 
 namespace Model
 {
-    public class RaceTime : DataPoint
+    public class Store<T> where T : DataPoint
     {
-        public String Name { get; set; }
-        public TimeSpan Time { get; set; }
+        private List<T> _list = new List<T>();
     }
 }

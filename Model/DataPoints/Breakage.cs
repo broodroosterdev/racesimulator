@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Model.DataPoints;
 
 namespace Model
 {
-    public class Breakage
+    public class Breakage : DataPoint
     {
         public String Name;
         public Section Section;

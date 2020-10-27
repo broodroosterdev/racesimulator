@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Model.DataPoints
 {
-    public class LaneSwitch
+    public class LaneSwitch : DataPoint
     {
         public String Name;
         public Section Section;
