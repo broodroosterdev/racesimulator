@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Model.DataPoints;
 
 namespace Model
 {
@@ -6,8 +7,10 @@ namespace Model
     {
         public List<IParticipant> Participants { get; set; } = new List<IParticipant>();
         public Queue<Track> Tracks { get; set; } = new Queue<Track>();
+        public DataRepository<DriverPoints> Points { get; set; } = new DataRepository<DriverPoints>();
+        public DataRepository<RaceTime> RaceTimes { get; set; } = new DataRepository<RaceTime>();
+        
 
-        public DataRepository<List<DriverPoints>> Points { get; set; } = new DataRepository<List<DriverPoints>>();
         public Track NextTrack()
         {
             if (Tracks.Count > 0)
@@ -15,13 +18,12 @@ namespace Model
             return null;
         }
 
-        public void GivePoints(List<RaceTime> raceResult)
+        public void GivePoints()
         {
             var points = 20;
-            var result = new List<DriverPoints>();
-            foreach (var laptime in raceResult)
+            foreach (var laptime in RaceTimes.GetData())
             {
-                result.Add(new DriverPoints()
+                Points.AddValue(new DriverPoints()
                 {
                     Name = laptime.Name,
                     Points = points
@@ -29,7 +31,6 @@ namespace Model
                 if (points > 1)
                     points--;
             }
-            Points.AddValue(result);
         }
     }
 }

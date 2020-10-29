@@ -5,7 +5,7 @@ using Model.DataPoints;
 
 namespace Model
 {
-    public class Store<T> where T : DataPoint
+    public class Store<T> where T : IDataPoint
     {
         private List<T> _list = new List<T>();
     }

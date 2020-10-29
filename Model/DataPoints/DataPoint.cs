@@ -4,7 +4,9 @@ using System.Text;
 
 namespace Model.DataPoints
 {
-    public class DataPoint
+    public interface IDataPoint
     {
+        public String Name { get; set; }
+        void Add(List<IDataPoint> list);
     }
 }

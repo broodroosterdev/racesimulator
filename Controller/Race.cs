@@ -25,17 +25,18 @@ namespace Controller
 
         public Track Track { get; set; }
         public List<IParticipant> Participants { get; set; }
-        public DateTime StartTime { get; set; }
+        private DataRepository<SectionTime> _sectionTimes = new DataRepository<SectionTime>();
+        private Dictionary<IParticipant, DateTime> _timeInSection = new Dictionary<IParticipant, DateTime>();
+        private DataRepository<Breakage> _breakages = new DataRepository<Breakage>();
+        private DataRepository<LaneSwitch> _laneSwitches = new DataRepository<LaneSwitch>();
+        private DateTime _startTime;
 
         private Random _random;
         private Dictionary<Section, SectionData> _positions;
         private Dictionary<IParticipant, int> _rondjes;
         private Timer _timer = new Timer(200);
-        private List<RaceTime> _raceResult = new List<RaceTime>();
-        private DataRepository<SectionTime> _sectionResult = new DataRepository<SectionTime>();
-        private Dictionary<IParticipant, DateTime> _timeInSection = new Dictionary<IParticipant, DateTime>();
-        private DataRepository<Breakage> _breakages = new DataRepository<Breakage>();
-        private DataRepository<LaneSwitch> _laneSwitches = new DataRepository<LaneSwitch>();
+        private int _finished;
+
         public Race(Track track, List<IParticipant> participants)
         {
             Track = track;
@@ -51,7 +52,7 @@ namespace Controller
         public void Start()
         {
             _timer.Enabled = true;
-            StartTime = DateTime.Now;
+            _startTime = DateTime.Now;
         }
 
 
@@ -59,6 +60,7 @@ namespace Controller
         {
             _timer.Enabled = false;
             DriversChanged = null;
+            RaceEnded = null;
         }
 
         public SectionData GetSectionData(Section section)
@@ -70,12 +72,7 @@ namespace Controller
             return _positions[section];
         }
 
-        public List<RaceTime> GetRaceResult()
-        {
-            return _raceResult;
-        }
-
-        public void IncreaseRondjes(IParticipant participant, Action<IParticipant> setter)
+        private void IncreaseRondjes(IParticipant participant, Action<IParticipant> setter)
         {
             if (!_rondjes.ContainsKey(participant))
             {
@@ -87,12 +84,13 @@ namespace Controller
             _rondjes[participant] = rondjes;
             if (rondjes >= AMOUNT_OF_ROUNDS)
             {
-                _raceResult.Add(new RaceTime()
+                Data.Competition.RaceTimes.AddValue(new RaceTime()
                 {
                     Name = participant.Name,
-                    Time = DateTime.Now.Subtract(StartTime)
+                    Time = DateTime.Now.Subtract(_startTime)
                 });
                 setter(null);
+                _finished++;
             }
         }
         private TimeSpan GetSectionTime(IParticipant participant)
@@ -103,7 +101,7 @@ namespace Controller
             }
             else
             {
-                return DateTime.Now.Subtract(StartTime);
+                return DateTime.Now.Subtract(_startTime);
             }
         }
 
@@ -118,7 +116,7 @@ namespace Controller
         public void RecordSectionTime(Section section, IParticipant participant)
         {
             var timeSpan = GetSectionTime(participant);
-            _sectionResult.AddValue(new SectionTime()
+            _sectionTimes.AddValue(new SectionTime()
             {
                 Name = participant.Name,
                 Section = section,
@@ -134,7 +132,7 @@ namespace Controller
 
         public void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            if (_raceResult.Count == Participants.Count)
+            if (_finished == Participants.Count)
             {
                 //Start new race using event
                 CleanUp();
@@ -177,16 +175,7 @@ namespace Controller
 
                             driverChanged = true;
                             var newDistance = data.DistanceLeft - 50;
-                            SectionData nextData;
-                            if (iterator.Next != null)
-                            {
-                                nextData = GetSectionData(iterator.Next.Value);
-
-                            }
-                            else
-                            {
-                                nextData = GetSectionData(Track.Sections.First.Value);
-                            }
+                            SectionData nextData = GetSectionData((iterator.Next ?? iterator.List.First).Value);
 
                             //Check if it can go straight without crashing
                             if (nextData.Left == null)
@@ -211,7 +200,7 @@ namespace Controller
                                 data.Left = null;
                                 data.DistanceLeft = 0;
                                 RecordSectionTime(iterator.Value, nextData.Right);
-                                _laneSwitches.AddValue(new LaneSwitch(nextData.Right.Name, iterator.Next.Value, Lane.Right));
+                                _laneSwitches.AddValue(new LaneSwitch(nextData.Right.Name, (iterator.Next ?? iterator.List.First).Value, Lane.Right));
                                 if (iterator.Value.SectionType == SectionTypes.Finish)
                                 {
                                     IncreaseRondjes(nextData.Right, p => nextData.Right = p);
@@ -241,15 +230,7 @@ namespace Controller
 
                             driverChanged = true;
                             var newDistance = data.DistanceRight - 50;
-                            SectionData nextData;
-                            if (iterator.Next != null)
-                            {
-                                nextData = GetSectionData(iterator.Next.Value);
-                            }
-                            else
-                            {
-                                nextData = GetSectionData(Track.Sections.First.Value);
-                            }
+                            SectionData nextData = GetSectionData((iterator.Next ?? iterator.List.First).Value);
 
                             //Check if it can go straight without crashing
                             if (nextData.Right == null)
@@ -273,7 +254,7 @@ namespace Controller
                                 data.Right = null;
                                 data.DistanceRight = 0;
                                 RecordSectionTime(iterator.Value, nextData.Left);
-                                _laneSwitches.AddValue(new LaneSwitch(nextData.Left.Name, iterator.Next.Value, Lane.Left));
+                                _laneSwitches.AddValue(new LaneSwitch(nextData.Left.Name, (iterator.Next ?? iterator.List.First).Value, Lane.Left));
                                 if (iterator.Value.SectionType == SectionTypes.Finish)
                                 {
                                     IncreaseRondjes(nextData.Left, p => nextData.Left = p);
@@ -321,7 +302,7 @@ namespace Controller
                     equipment.Performance = 1;
                 }
                 else
-                {
+                { 
                     _breakages.AddValue(new Breakage(participant.Name, section));
                 }
 

@@ -5,15 +5,20 @@ using Model.DataPoints;
 
 namespace Model
 {
-    public class Breakage : DataPoint
+    public class Breakage : IDataPoint
     {
-        public String Name;
+        public String Name { get; set; }
         public Section Section;
 
         public Breakage(String name, Section section)
         {
             Name = name;
             Section = section;
+        }
+
+        public void Add(List<IDataPoint> list)
+        {
+            list.Add(this);
         }
     }
 }

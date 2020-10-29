@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Model.DataPoints
 {
-    public class LaneSwitch : DataPoint
+    public class LaneSwitch : IDataPoint
     {
-        public String Name;
+        public String Name { get; set; }
         public Section Section;
         public Lane ToLane;
 
@@ -15,6 +15,11 @@ namespace Model.DataPoints
             Name = name;
             Section = section;
             ToLane = toLane;
+        }
+
+        public void Add(List<IDataPoint> list)
+        {
+            list.Add(this);
         }
     }
 
