@@ -17,7 +17,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void sectionsToList_EmptyArray_ReturnEmptyList()
+        public void EmptyArray_ReturnEmptyList()
         {
             var track = new Track("test", new SectionTypes[0]);
             Assert.IsNotNull(track.Sections);
@@ -25,7 +25,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void sectionsToList_OneItemArray_ReturnOneItemList()
+        public void OneItemArray_ReturnOneItemList()
         {
             var track = new Track("test", new SectionTypes[1]
             {

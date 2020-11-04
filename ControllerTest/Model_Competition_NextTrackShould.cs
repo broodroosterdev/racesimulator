@@ -16,14 +16,14 @@ namespace ControllerTest
         }
 
         [Test]
-        public void NextTrack_EmptyQueue_ReturnNull()
+        public void EmptyQueue_ReturnNull()
         {
             var result = _competition.NextTrack();
             Assert.IsNull(result);
         }
 
         [Test]
-        public void NextTrack_OneInQueue_ReturnTrack()
+        public void OneInQueue_ReturnTrack()
         {
             var track = new Track("Test", new LinkedList<Section>());
             _competition.Tracks.Enqueue(track);
@@ -32,7 +32,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void NextTrack_OneInQueue_RemoveTrackFromQueue()
+        public void OneInQueue_RemoveTrackFromQueue()
         {
             var track = new Track("Test", new LinkedList<Section>());
             var result = _competition.NextTrack();
@@ -41,7 +41,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void NextTrack_TwoInQueue_ReturnNextTrack()
+        public void TwoInQueue_ReturnNextTrack()
         {
             var spa = new Track("Spa", new LinkedList<Section>());
             var assen = new Track("Assen", new LinkedList<Section>()); 

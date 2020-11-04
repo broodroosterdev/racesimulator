@@ -8,5 +8,6 @@ namespace Model.DataPoints
     {
         public String Name { get; set; }
         void Add(List<IDataPoint> list);
+        string BestParticipant(List<IDataPoint> list);
     }
 }

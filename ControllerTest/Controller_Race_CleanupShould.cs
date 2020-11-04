@@ -35,7 +35,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void Cleanup_ShouldDisableTimer()
+        public void DisableTimer()
         {
             _race.Start();
             _race.CleanUp();
@@ -44,7 +44,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void Cleanup_ShouldRemoveListeners()
+        public void RemoveListeners()
         {
             //Add fake events
             _race.DriversChanged += (i, j) => { };

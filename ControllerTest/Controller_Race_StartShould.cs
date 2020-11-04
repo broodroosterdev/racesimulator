@@ -37,7 +37,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void Start_ShouldEnableTimer()
+        public void EnableTimer()
         {
             _race.Start();
             var timer = Helper.GetPrivate<Timer>(_race, "_timer"); 
@@ -45,7 +45,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void Start_ShouldSetStartTime()
+        public void SetStartTime()
         {
             _race.Start();
             var time = Helper.GetPrivate<DateTime>(_race, "_startTime");

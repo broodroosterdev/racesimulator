@@ -35,7 +35,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void MoveDrivers_MoveToNextSectionWhenDistanceTravelled()
+        public void MoveToNextSectionWhenDistanceTravelled()
         {
             _race.Participants.RemoveAt(1);
             _race.Participants[0].Equipment.Performance = 1;
@@ -45,7 +45,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void MoveDrivers_DistanceTravelledEqualsSpeedTimesPerformance()
+        public void DistanceTravelledEqualsSpeedTimesPerformance()
         {
             _race.Participants[0].Equipment.Performance = 1;
             _race.Participants[0].Equipment.Speed = 30;
@@ -61,7 +61,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void MoveDrivers_ShouldTryToOvertake()
+        public void TryToOvertake()
         {
             _race.Participants[0].Equipment.Performance = 1;
             _race.Participants[0].Equipment.Speed = 0;
@@ -83,7 +83,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void MoveDrivers_ShouldCapDistanceWhenUnableToOvertake()
+        public void CapDistanceWhenUnableToOvertake()
         {
             _race.Participants[0].Equipment.Performance = 1;
             _race.Participants[0].Equipment.Speed = 0;
@@ -105,7 +105,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void MoveDrivers_ShouldWrapAround()
+        public void WrapAround()
         {
             _race.Participants[0].Equipment.Performance = 1;
             _race.Participants[0].Equipment.Speed = 30;

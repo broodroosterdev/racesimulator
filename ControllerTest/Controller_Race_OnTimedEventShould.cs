@@ -36,7 +36,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void OnTimedEvent_ShouldCleanupWhenAllFinished()
+        public void CleanupWhenAllFinished()
         {
             _race.Start();
             _race.Participants = new List<IParticipant>();
@@ -46,7 +46,7 @@ namespace ControllerTest
         }
 
         [Test]
-        public void OnTimedEvent_ShouldMoveDriversWhenNotFinished()
+        public void MoveDriversWhenNotFinished()
         {
             _race.Start();
             _race.Participants[0].Equipment.Performance = 1;

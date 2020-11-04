@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Model.DataPoints;
@@ -26,6 +27,13 @@ namespace Model
             }
             if (!found)
                 list.Add(this);
+        }
+
+        public string BestParticipant(List<IDataPoint> list)
+        {
+            var raceTimes = list.Select((e) => (RaceTime) e).ToList();
+            var fastestParticipant = raceTimes.Aggregate((p1, p2) => p1.Time < p2.Time ? p1 : p2);
+            return fastestParticipant.Name;
         }
     }
 }

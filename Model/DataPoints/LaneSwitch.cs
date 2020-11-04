@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Model.DataPoints
@@ -20,6 +21,15 @@ namespace Model.DataPoints
         public void Add(List<IDataPoint> list)
         {
             list.Add(this);
+        }
+
+        public string BestParticipant(List<IDataPoint> list)
+        {
+            //Group Switches by participant
+            var switchesByPerson = list.ToLookup(e => e.Name);
+            //Get group with the most switches
+            var highestPerson = switchesByPerson.Aggregate((p1, p2) => p1.Count() > p2.Count() ? p1 : p2);
+            return highestPerson.Key;
         }
     }
 

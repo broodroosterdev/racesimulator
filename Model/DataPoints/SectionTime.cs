@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Model.DataPoints;
@@ -30,6 +31,20 @@ namespace Model
 
             if (!found)
                 list.Add(this);
+        }
+
+        public string BestParticipant(List<IDataPoint> list)
+        {
+            //Gets the average of all the timespans
+            Func<List<IDataPoint>, double> getAverageTime =
+                l => l.Select(e => (e as SectionTime).Time.Milliseconds).Average();
+            //Groups the sectionTimes by participant
+            var sectionTimesByParticipant = list.GroupBy(e => e.Name);
+            var bestParticipant = sectionTimesByParticipant 
+                //Gets the lowest average
+                .Aggregate((p1, p2) => 
+                    getAverageTime(p1.ToList()) < getAverageTime(p2.ToList()) ? p1 : p2);
+            return bestParticipant.Key;
         }
     }
 }

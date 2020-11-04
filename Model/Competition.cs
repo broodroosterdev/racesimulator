@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Model.DataPoints;
 
 namespace Model
@@ -13,15 +14,14 @@ namespace Model
 
         public Track NextTrack()
         {
-            if (Tracks.Count > 0)
-                return Tracks.Dequeue();
-            return null;
+            return Tracks.Count > 0 ? Tracks.Dequeue() : null;
         }
 
         public void GivePoints()
         {
             var points = 20;
-            foreach (var laptime in RaceTimes.GetData())
+            var sortedTimes = RaceTimes.GetData().Select(e => (RaceTime)e).OrderBy(raceTime => raceTime.Time).ToList();
+            foreach (var laptime in sortedTimes)
             {
                 Points.AddValue(new DriverPoints()
                 {

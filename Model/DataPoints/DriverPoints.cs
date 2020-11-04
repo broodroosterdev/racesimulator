@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Model.DataPoints;
 
@@ -25,6 +26,13 @@ namespace Model
             }
             if(!found)
                 list.Add(this);
+        }
+
+        public string BestParticipant(List<IDataPoint> list)
+        {
+            var sectionTimes = list.Select(p => (DriverPoints)p).ToList();
+            var bestParticipant = sectionTimes.Aggregate((p1, p2) => p1.Points > p2.Points ? p1 : p2);
+            return bestParticipant.Name;
         }
     }
 }
