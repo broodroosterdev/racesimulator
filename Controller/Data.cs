@@ -100,7 +100,7 @@ namespace Controller
                 SectionTypes.Straight,
                 SectionTypes.Straight,
             });
-            Competition.Tracks.Enqueue(Portimao);
+            //Competition.Tracks.Enqueue(Portimao);
             Track SilverSteen = new Track("SilverSteen", new SectionTypes[]
             {
                 SectionTypes.StartGrid,

@@ -95,7 +95,11 @@ namespace RaceSimulator
             var grid = GenerateGrid(track.Sections);
             Console.CursorVisible = false;
             Console.SetCursorPosition(0,0);
+            Console.Write(new string(' ', Console.WindowWidth)); 
+            Console.SetCursorPosition(0,0);
             Console.Write(track.Name);
+            Console.Write("   ");
+            Console.Write(Data.CurrentRace.SectionTimes.BestParticipant());
             Console.WriteLine();
             for (int y = grid.Count - 1; y >= 0; y--)
             {

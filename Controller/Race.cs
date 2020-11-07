@@ -25,7 +25,7 @@ namespace Controller
 
         public Track Track { get; set; }
         public List<IParticipant> Participants { get; set; }
-        private DataRepository<SectionTime> _sectionTimes = new DataRepository<SectionTime>();
+        public DataRepository<SectionTime> SectionTimes = new DataRepository<SectionTime>();
         private Dictionary<IParticipant, DateTime> _timeInSection = new Dictionary<IParticipant, DateTime>();
         private DataRepository<Breakage> _breakages = new DataRepository<Breakage>();
         private DataRepository<LaneSwitch> _laneSwitches = new DataRepository<LaneSwitch>();
@@ -34,7 +34,7 @@ namespace Controller
         private Random _random;
         private Dictionary<Section, SectionData> _positions;
         private Dictionary<IParticipant, int> _rondjes;
-        private Timer _timer = new Timer(200);
+        private Timer _timer = new Timer(500);
         private int _finished;
 
         public Race(Track track, List<IParticipant> participants)
@@ -60,7 +60,6 @@ namespace Controller
         {
             _timer.Enabled = false;
             DriversChanged = null;
-            RaceEnded = null;
         }
 
         public SectionData GetSectionData(Section section)
@@ -116,7 +115,7 @@ namespace Controller
         public void RecordSectionTime(Section section, IParticipant participant)
         {
             var timeSpan = GetSectionTime(participant);
-            _sectionTimes.AddValue(new SectionTime()
+            SectionTimes.AddValue(new SectionTime()
             {
                 Name = participant.Name,
                 Section = section,
