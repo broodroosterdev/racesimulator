@@ -24,5 +24,8 @@ namespace RaceSimulatorGUI
         public MainWindow()
         {
             InitializeComponent();
+            Screen.Source =
+                ImageCache.CreateBitmapSourceFromGdiBitmap(ImageCache.GetEmpty((int)Height, (int)Width));
         }
+    }
 }
