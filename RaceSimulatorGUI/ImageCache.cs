@@ -4,13 +4,14 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Brushes = System.Drawing.Brushes;
+using FontFamily = System.Drawing.FontFamily;
 
 namespace RaceSimulatorGUI
 {
-    public class ImageCache
+    public static class ImageCache
     {
         private static Dictionary<string, Bitmap> _cache = new Dictionary<string, Bitmap>();
-
         public static Bitmap GetImage(string key)
         {
             Bitmap bitmap;
@@ -26,12 +27,17 @@ namespace RaceSimulatorGUI
             }
         }
 
-        public static Bitmap GetEmpty(int height, int width)
+        public static Bitmap GetEmpty(int width, int height)
         {
             Bitmap bitmap;
             if (!_cache.TryGetValue("empty", out bitmap))
             {
-                bitmap = new Bitmap(height, width);
+                bitmap = new Bitmap(width, height);
+                
+                //Make background green
+                var g = Graphics.FromImage(bitmap);
+                var rect = new Rectangle(0, 0, width, height);
+                g.FillRectangle(Brushes.SeaGreen, rect);
                 _cache.Add("empty", bitmap);
             }
             return (Bitmap)bitmap.Clone();
