@@ -21,5 +21,6 @@
             </Menu>
         </DockPanel>
         <Image Margin="0 20 0 0" x:Name="Screen" />
+        <Label VerticalAlignment="Top"  HorizontalAlignment="Right" Width="60" Height="30" Foreground="White" Margin="0 20 0 0" Content="{Binding Source={StaticResource Data}, Path=TrackName}"/>
     </Grid>
 </Window>

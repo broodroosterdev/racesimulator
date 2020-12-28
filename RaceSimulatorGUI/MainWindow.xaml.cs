@@ -27,9 +27,9 @@ namespace RaceSimulatorGUI
         private RaceStatsWindow raceWindow; 
         public MainWindow()
         {
-            InitializeComponent();
             Data.Initialize();
             Data.NextRace();
+            InitializeComponent();
             Initialize();
         }
 
