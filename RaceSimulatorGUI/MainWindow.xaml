@@ -8,6 +8,15 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid
         Background="Black">
-        <Image x:Name="Screen" />
+        <DockPanel >
+            <Menu VerticalAlignment="Top" Height="20" DockPanel.Dock="Top">
+                <MenuItem Header="Menu">
+                    <MenuItem Header="View Race Stats"/>
+                    <MenuItem Header="View Competition Stats"/>
+                    <MenuItem Header="Exit"/>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+        <Image Margin="0 20 0 0" x:Name="Screen" />
     </Grid>
 </Window>
