@@ -28,8 +28,23 @@ namespace RaceSimulatorGUI
             InitializeComponent();
             Data.Initialize();
             Data.NextRace();
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            ImageCache.Clear();
             Data.CurrentRace.DriversChanged += CurrentRaceOnDriversChanged;
+            Data.CurrentRace.RaceEnded += CurrentRaceOnRaceEnded;
             Data.CurrentRace.Start();
+        }
+        
+
+        private void CurrentRaceOnRaceEnded(object model)
+        {
+            Data.Competition.GivePoints();    
+            Data.NextRace();
+            Initialize(); 
         }
 
         private void CurrentRaceOnDriversChanged(object model, DriversChangedEventArgs e)
@@ -39,7 +54,7 @@ namespace RaceSimulatorGUI
                 new Action(() =>
                 {
                     Screen.Source = null;
-                    Screen.Source = Renderer.DrawTrack(Data.CurrentRace.Track); 
+                    Screen.Source = Renderer.DrawTrack(Data.CurrentRace.Track);
                 }));
             
         }

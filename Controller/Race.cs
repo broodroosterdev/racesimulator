@@ -13,7 +13,7 @@ namespace Controller
 {
     public class Race
     {
-        private const int AMOUNT_OF_ROUNDS = 2;
+        private const int AMOUNT_OF_ROUNDS = 1;
 
         public delegate void DriversChangedEvent(object model, DriversChangedEventArgs e);
 
@@ -34,7 +34,7 @@ namespace Controller
         private Random _random;
         private Dictionary<Section, SectionData> _positions;
         private Dictionary<IParticipant, int> _rondjes;
-        private Timer _timer = new Timer(500);
+        private Timer _timer = new Timer(300);
         private int _finished;
 
         public Race(Track track, List<IParticipant> participants)
@@ -280,7 +280,7 @@ namespace Controller
         {
             foreach (IParticipant participant in Participants)
             {
-                participant.Equipment.Quality = _random.Next(20, 100);
+                participant.Equipment.Quality = _random.Next(20, 50);
                 participant.Equipment.Performance = _random.Next(1, 3);
                 participant.Equipment.Speed = _random.Next(5, 15);
             }
@@ -289,9 +289,9 @@ namespace Controller
         public void TryToBreak(IParticipant participant, Section section, ref bool changed)
         {
             //If the equipment is broken, make the chance it will get repaired higher
-            int chance = participant.Equipment.IsBroken ? 5 : 1;
+            int chance = participant.Equipment.IsBroken ? 10 : 1;
             IEquipment equipment = participant.Equipment;
-            int random = _random.Next(0, equipment.Quality * 10);
+            int random = _random.Next(0, 100 - (equipment.Quality));
             if (random <= chance)
             {
                 if (!equipment.IsBroken)

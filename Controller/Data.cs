@@ -20,7 +20,8 @@ namespace Controller
             {
                 new Driver(){Equipment = new Car(), Name = "Wando Worris"},
                 new Driver(){Equipment = new Car(), Name = "Daniel Risotto"},
-                new Driver(){Equipment = new Car(), Name = "Max Verslapen"}
+                //new Driver(){Equipment = new Car(), Name = "Max Verslapen"},
+                //new Driver(){Equipment = new Car(), Name = "Alonso"}
             };
         }
 
@@ -100,7 +101,7 @@ namespace Controller
                 SectionTypes.Straight,
                 SectionTypes.Straight,
             });
-            //Competition.Tracks.Enqueue(Portimao);
+            Competition.Tracks.Enqueue(Portimao);
             Track SilverSteen = new Track("SilverSteen", new SectionTypes[]
             {
                 SectionTypes.StartGrid,
