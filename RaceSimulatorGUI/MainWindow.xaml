@@ -11,9 +11,9 @@
         <DockPanel >
             <Menu VerticalAlignment="Top" Height="20" DockPanel.Dock="Top">
                 <MenuItem Header="Menu">
-                    <MenuItem Header="View Race Stats"/>
-                    <MenuItem Header="View Competition Stats"/>
-                    <MenuItem Header="Exit"/>
+                    <MenuItem Header="View Race Stats" Click="MenuItem_Race_OnClick"/>
+                    <MenuItem Header="View Competition Stats" Click="MenuItem_Competition_OnClick"/>
+                    <MenuItem Header="Exit" Click="MenuItem_Exit_OnClick"/>
                 </MenuItem>
             </Menu>
         </DockPanel>
