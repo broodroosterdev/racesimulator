@@ -11,12 +11,14 @@ namespace RaceSimulatorGUI
     public static class Renderer
     {
         #region graphics
+
         internal static string _straight = "straight.png";
         internal static string _start = "startgrid.png";
         internal static string _finish = "finish.png";
         internal static string _left = "leftcorner.png";
         internal static string _right = "rightcorner.png";
         internal static string _car = "car_red.png";
+
         #endregion
 
         public static Point GetCarOffset(SectionInfo info, Point origin, bool left, int Width, int Height)
@@ -27,13 +29,12 @@ namespace RaceSimulatorGUI
                 Xoffset = Width / 4;
             else
                 Xoffset = Width - ((Width / 4) * 2);
-            
+
             //If the tile is vertical
             if (info.Direction % 2 == 0)
                 return new Point(origin.X + Xoffset, origin.Y + Height / 2);
             else
                 return new Point(origin.X + Height / 2, origin.Y + Xoffset);
-
         }
 
         public static Bitmap GetTile(SectionInfo info)
@@ -84,11 +85,11 @@ namespace RaceSimulatorGUI
                     throw new ArgumentOutOfRangeException();
             }
         }
-        
+
         public static BitmapSource DrawTrack(Track track)
         {
             var (bounds, grid) = GridHelper.GenerateGrid(track.Sections);
-            Bitmap bitmap = ImageCache.GetEmpty(1280,720);
+            Bitmap bitmap = ImageCache.GetEmpty(1280, 720);
             Graphics g = Graphics.FromImage(bitmap);
             var tileHeight = 720 / (bounds.HighestX - bounds.LowestX);
             var tileWidth = tileHeight;
@@ -107,29 +108,40 @@ namespace RaceSimulatorGUI
 
                     x++;
                 }
+
                 x = 0;
                 y++;
             }
+
             return ImageCache.CreateBitmapSourceFromGdiBitmap(bitmap);
         }
 
         public static void DrawCars(Graphics g, SectionInfo tile, Point origin, int tileWidth, int tileHeight)
         {
             var data = Data.CurrentRace.GetSectionData(tile.Section);
-            var car = new Bitmap(ImageCache.GetImage(_car),tileWidth / 5, tileHeight / 3);
-            car.RotateFlip(DirectionToRotation(tile.Direction));
+
             if (data.Left != null)
             {
+                var car = new Bitmap(ImageCache.GetImage(GetCar(data.Left)), tileWidth / 5, tileHeight / 3);
+                car.RotateFlip(DirectionToRotation(tile.Direction));
                 var offset = GetCarOffset(tile, origin, true, tileWidth, tileHeight);
                 var opacity = data.Left.Equipment.IsBroken ? 0.5f : 1;
-                g.DrawImage(ImageCache.SetImageOpacity(car, opacity), offset.X, offset.Y);   
+                g.DrawImage(ImageCache.SetImageOpacity(car, opacity), offset.X, offset.Y);
             }
-            if(data.Right != null)
+
+            if (data.Right != null)
             {
+                var car = new Bitmap(ImageCache.GetImage(GetCar(data.Right)), tileWidth / 5, tileHeight / 3);
+                car.RotateFlip(DirectionToRotation(tile.Direction));
                 var offset = GetCarOffset(tile, origin, false, tileWidth, tileHeight);
                 var opacity = data.Right.Equipment.IsBroken ? 0.5f : 1;
-                g.DrawImage(ImageCache.SetImageOpacity(car, opacity), offset.X, offset.Y);  
+                g.DrawImage(ImageCache.SetImageOpacity(car, opacity), offset.X, offset.Y);
             }
+        }
+
+        public static string GetCar(IParticipant participant)
+        {
+            return $"car_{participant.TeamColor.ToString().ToLower()}.png";
         }
     }
 }

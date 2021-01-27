@@ -14,13 +14,14 @@ namespace ControllerTest
         [SetUp]
         public void Setup()
         {
-            var track = new Track("test", new SectionTypes[] {
-                SectionTypes.StartGrid, 
+            var track = new Track("test", new SectionTypes[]
+            {
                 SectionTypes.StartGrid,
-                SectionTypes.Finish, 
-                SectionTypes.RightCorner, 
+                SectionTypes.StartGrid,
+                SectionTypes.Finish,
                 SectionTypes.RightCorner,
-                SectionTypes.Straight, 
+                SectionTypes.RightCorner,
+                SectionTypes.Straight,
                 SectionTypes.Straight,
                 SectionTypes.Straight,
                 SectionTypes.RightCorner,
@@ -28,9 +29,9 @@ namespace ControllerTest
             });
             _race = new Race(track, new List<IParticipant>()
             {
-                new Driver(){Name = "test", Equipment = new Car()},
-                new Driver(){Name = "2test", Equipment = new Car()},
-                new Driver(){Name = "3test", Equipment = new Car()}
+                new Driver() {Name = "test", Equipment = new Car()},
+                new Driver() {Name = "2test", Equipment = new Car()},
+                new Driver() {Name = "3test", Equipment = new Car()}
             });
         }
 

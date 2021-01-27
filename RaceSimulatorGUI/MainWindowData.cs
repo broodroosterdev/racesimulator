@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Controller;
-using Model;
-using RaceSimulatorGUI.Annotations;
 
 namespace RaceSimulatorGUI
 {
@@ -12,11 +10,11 @@ namespace RaceSimulatorGUI
 
         public MainWindowData()
         {
-            Data.CurrentRace.DriversChanged += (o,e) => OnPropertyChanged("");
+            Data.CurrentRace.DriversChanged += (o, e) => OnPropertyChanged("");
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

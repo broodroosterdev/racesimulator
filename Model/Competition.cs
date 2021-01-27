@@ -10,7 +10,7 @@ namespace Model
         public Queue<Track> Tracks { get; set; } = new Queue<Track>();
         public DataRepository<DriverPoints> Points { get; set; } = new DataRepository<DriverPoints>();
         public DataRepository<RaceTime> RaceTimes { get; set; } = new DataRepository<RaceTime>();
-        
+
 
         public Track NextTrack()
         {
@@ -20,7 +20,7 @@ namespace Model
         public void GivePoints()
         {
             var points = 20;
-            var sortedTimes = RaceTimes.GetData().Select(e => (RaceTime)e).OrderBy(raceTime => raceTime.Time).ToList();
+            var sortedTimes = RaceTimes.GetData().Select(e => (RaceTime) e).OrderBy(raceTime => raceTime.Time).ToList();
             foreach (var laptime in sortedTimes)
             {
                 Points.AddValue(new DriverPoints()

@@ -9,7 +9,7 @@ namespace ControllerTest
     class Model_Track_sectionsToListShould
     {
         private Track _track;
-        
+
         [SetUp]
         public void Setup()
         {

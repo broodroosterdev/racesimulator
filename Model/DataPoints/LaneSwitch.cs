@@ -8,8 +8,8 @@ namespace Model.DataPoints
     public class LaneSwitch : IDataPoint
     {
         public String Name { get; set; }
-        public Section Section;
-        public Lane ToLane;
+        public Section Section { get; set; }
+        public Lane ToLane { get; set; }
 
         public LaneSwitch(String name, Section section, Lane toLane)
         {

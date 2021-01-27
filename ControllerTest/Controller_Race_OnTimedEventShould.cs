@@ -12,16 +12,18 @@ namespace ControllerTest
     class Controller_Race_OnTimedEventShould
     {
         private Race _race;
+
         [SetUp]
         public void Setup()
         {
-            var track = new Track("test", new SectionTypes[] {
-                SectionTypes.StartGrid, 
+            var track = new Track("test", new SectionTypes[]
+            {
                 SectionTypes.StartGrid,
-                SectionTypes.Finish, 
-                SectionTypes.RightCorner, 
+                SectionTypes.StartGrid,
+                SectionTypes.Finish,
                 SectionTypes.RightCorner,
-                SectionTypes.Straight, 
+                SectionTypes.RightCorner,
+                SectionTypes.Straight,
                 SectionTypes.Straight,
                 SectionTypes.Straight,
                 SectionTypes.RightCorner,
@@ -29,31 +31,21 @@ namespace ControllerTest
             });
             _race = new Race(track, new List<IParticipant>()
             {
-                new Driver(){Name = "test", Equipment = new Car()},
-                new Driver(){Name = "2test", Equipment = new Car()},
-                new Driver(){Name = "3test", Equipment = new Car()}
+                new Driver() {Name = "test", Equipment = new Car()},
+                new Driver() {Name = "2test", Equipment = new Car()},
+                new Driver() {Name = "3test", Equipment = new Car()}
             });
-        }
-
-        [Test]
-        public void CleanupWhenAllFinished()
-        {
-            _race.Start();
-            _race.Participants = new List<IParticipant>();
-            Thread.Sleep(300);
-            var timer = Helper.GetPrivate<System.Timers.Timer>(_race, "_timer");
-            Assert.IsFalse(timer.Enabled);
         }
 
         [Test]
         public void MoveDriversWhenNotFinished()
         {
-            _race.Start();
+            //_race.Start();
             _race.Participants[0].Equipment.Performance = 1;
             _race.Participants[0].Equipment.Speed = 30;
             var data = _race.GetSectionData(_race.Track.Sections.First.Next.Value);
             Assert.AreEqual(0, data.DistanceLeft);
-            Thread.Sleep(300);
+            _race.MoveDrivers();
             data = _race.GetSectionData(_race.Track.Sections.First.Next.Value);
             Assert.AreNotEqual(0, data.DistanceLeft);
         }

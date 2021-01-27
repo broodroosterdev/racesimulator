@@ -8,6 +8,7 @@ namespace Model
     {
         public string Name { get; set; }
         public LinkedList<Section> Sections { get; set; }
+
         public Track(string name, LinkedList<Section> sections)
         {
             Name = name;
@@ -25,7 +26,7 @@ namespace Model
             LinkedList<Section> sectionList = new LinkedList<Section>();
             foreach (SectionTypes type in sections)
             {
-                sectionList.AddLast(new Section{SectionType = type});
+                sectionList.AddLast(new Section {SectionType = type});
             }
 
             return sectionList;

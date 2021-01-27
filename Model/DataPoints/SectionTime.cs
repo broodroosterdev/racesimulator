@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Model.DataPoints;
+
 namespace Model
 {
     public class SectionTime : IDataPoint
@@ -40,9 +41,9 @@ namespace Model
                 l => l.Select(e => (e as SectionTime).Time.Milliseconds).Average();
             //Groups the sectionTimes by participant
             var sectionTimesByParticipant = list.GroupBy(e => e.Name);
-            var bestParticipant = sectionTimesByParticipant 
+            var bestParticipant = sectionTimesByParticipant
                 //Gets the lowest average
-                .Aggregate((p1, p2) => 
+                .Aggregate((p1, p2) =>
                     getAverageTime(p1.ToList()) < getAverageTime(p2.ToList()) ? p1 : p2);
             return bestParticipant.Key;
         }

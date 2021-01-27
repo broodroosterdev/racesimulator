@@ -23,15 +23,15 @@ namespace ControllerTest
                 // See: http://agsmith.wordpress.com/2007/12/13/where-are-my-fields/
 
                 return GetFieldReference(targetType.BaseType, fieldName);
-
             }
+
             return field;
         }
 
         public static T GetPrivate<T>(object ob, string fieldName)
         {
             FieldInfo field = GetFieldReference(ob.GetType(), fieldName);
-            return (T)field.GetValue(ob);
+            return (T) field.GetValue(ob);
         }
     }
 }

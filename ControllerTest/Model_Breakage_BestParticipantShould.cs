@@ -8,7 +8,7 @@ namespace ControllerTest
     class Model_Breakage_BestParticipantShould
     {
         private DataRepository<Breakage> _repo;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -24,6 +24,5 @@ namespace ControllerTest
             var name = _repo.BestParticipant();
             Assert.AreEqual(name, "B");
         }
-
     }
 }

@@ -9,12 +9,13 @@ namespace ControllerTest
     class Model_DriverPoints_BestParticipantShould
     {
         private DataRepository<DriverPoints> _repo;
+
         [SetUp]
         public void Setup()
         {
             _repo = new DataRepository<DriverPoints>();
-            _repo.AddValue(new DriverPoints(){Name = "A", Points = 1});
-            _repo.AddValue(new DriverPoints(){Name = "B", Points = 2});
+            _repo.AddValue(new DriverPoints() {Name = "A", Points = 1});
+            _repo.AddValue(new DriverPoints() {Name = "B", Points = 2});
         }
 
         [Test]
@@ -23,6 +24,5 @@ namespace ControllerTest
             var naam = _repo.BestParticipant();
             Assert.AreEqual("B", naam);
         }
-
     }
 }

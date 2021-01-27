@@ -25,6 +25,7 @@ namespace Model
                     found = true;
                 }
             }
+
             if (!found)
                 list.Add(this);
         }

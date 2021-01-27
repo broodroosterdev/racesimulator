@@ -8,12 +8,13 @@ using System.Linq;
 using System.Reflection;
 using System.Timers;
 using Model.DataPoints;
+using System.Runtime.InteropServices;
 
 namespace Controller
 {
     public class Race
     {
-        private const int AMOUNT_OF_ROUNDS = 1;
+        private const int AmountOfRounds = 1;
 
         public delegate void DriversChangedEvent(object model, DriversChangedEventArgs e);
 
@@ -23,12 +24,12 @@ namespace Controller
 
         public event RaceEndedEvent RaceEnded;
 
-        public Track Track { get; set; }
-        public List<IParticipant> Participants { get; set; }
+        public Track Track { get; }
+        public List<IParticipant> Participants { get; }
         public DataRepository<SectionTime> SectionTimes = new DataRepository<SectionTime>();
         private Dictionary<IParticipant, DateTime> _timeInSection = new Dictionary<IParticipant, DateTime>();
-        private DataRepository<Breakage> _breakages = new DataRepository<Breakage>();
-        private DataRepository<LaneSwitch> _laneSwitches = new DataRepository<LaneSwitch>();
+        public DataRepository<Breakage> Breakages = new DataRepository<Breakage>();
+        public DataRepository<LaneSwitch> LaneSwitches = new DataRepository<LaneSwitch>();
         private DateTime _startTime;
 
         private Random _random;
@@ -68,6 +69,7 @@ namespace Controller
             {
                 _positions.Add(section, new SectionData());
             }
+
             return _positions[section];
         }
 
@@ -81,7 +83,7 @@ namespace Controller
             var rondjes = _rondjes[participant];
             rondjes++;
             _rondjes[participant] = rondjes;
-            if (rondjes >= AMOUNT_OF_ROUNDS)
+            if (rondjes >= AmountOfRounds)
             {
                 Data.Competition.RaceTimes.AddValue(new RaceTime()
                 {
@@ -92,35 +94,46 @@ namespace Controller
                 _finished++;
             }
         }
+
         private TimeSpan GetSectionTime(IParticipant participant)
         {
+            //Haal de laatste section tijd op
             if (_timeInSection.TryGetValue(participant, out DateTime enteredTime))
             {
+                //En return de timespan tussen nu en die tijd
                 return DateTime.Now.Subtract(enteredTime);
             }
+            //Als dit niet opgehaald kan worden
             else
             {
+                //Return dan de timespan tussen het moment dat de race begon
                 return DateTime.Now.Subtract(_startTime);
             }
         }
 
         private void SetNewSectionTime(IParticipant participant)
         {
+            //Als er al een tijd in de dictionary zit
             if (_timeInSection.ContainsKey(participant))
+                //zet de tijd in de dictionary naar nu
                 _timeInSection[participant] = DateTime.Now;
             else
+                //anders, voeg een nieuwe item toe met tijd van nu
                 _timeInSection.Add(participant, DateTime.Now);
         }
 
         public void RecordSectionTime(Section section, IParticipant participant)
         {
+            //Haal de tijd die deze sectie heeft genomen op
             var timeSpan = GetSectionTime(participant);
+            //Voeg het toe aan de datarepository
             SectionTimes.AddValue(new SectionTime()
             {
                 Name = participant.Name,
                 Section = section,
                 Time = timeSpan
             });
+            //En zet weer een nieuwe tijd voor het begin van de volgende sectie
             SetNewSectionTime(participant);
         }
 
@@ -129,14 +142,22 @@ namespace Controller
             return participant == null;
         }
 
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
         public void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             if (_finished == Participants.Count)
             {
                 //Start new race using event
                 CleanUp();
-                Console.SetCursorPosition(0, 0);
-                Console.WriteLine("Race ended" + new string(' ', Console.WindowWidth));
+                if (GetConsoleWindow() != IntPtr.Zero)
+                {
+                    Console.SetCursorPosition(0, 0);
+
+                    Console.WriteLine("Race ended" + new string(' ', Console.WindowWidth));
+                }
+
                 RaceEnded?.Invoke(this);
                 RaceEnded = null;
             }
@@ -146,7 +167,7 @@ namespace Controller
                 if (driverChanged)
                 {
                     _timer.Enabled = false;
-                    DriversChanged?.Invoke(this, new DriversChangedEventArgs() { Track = this.Track });
+                    DriversChanged?.Invoke(this, new DriversChangedEventArgs() {Track = this.Track});
                     _timer.Enabled = true;
                 }
             }
@@ -171,7 +192,6 @@ namespace Controller
                     {
                         if (!HasFinished(data.Left))
                         {
-
                             driverChanged = true;
                             var newDistance = data.DistanceLeft - 50;
                             SectionData nextData = GetSectionData((iterator.Next ?? iterator.List.First).Value);
@@ -179,7 +199,6 @@ namespace Controller
                             //Check if it can go straight without crashing
                             if (nextData.Left == null)
                             {
-
                                 nextData.Left = data.Left;
                                 nextData.DistanceLeft = newDistance;
                                 data.Left = null;
@@ -189,7 +208,7 @@ namespace Controller
                                 {
                                     IncreaseRondjes(nextData.Left, p => nextData.Left = p);
                                 }
-                                
+
                                 //Check if it can overtake on the right instead
                             }
                             else if (nextData.Right == null)
@@ -199,12 +218,12 @@ namespace Controller
                                 data.Left = null;
                                 data.DistanceLeft = 0;
                                 RecordSectionTime(iterator.Value, nextData.Right);
-                                _laneSwitches.AddValue(new LaneSwitch(nextData.Right.Name, (iterator.Next ?? iterator.List.First).Value, Lane.Right));
+                                LaneSwitches.AddValue(new LaneSwitch(nextData.Right.Name,
+                                    (iterator.Next ?? iterator.List.First).Value, Lane.Right));
                                 if (iterator.Value.SectionType == SectionTypes.Finish)
                                 {
                                     IncreaseRondjes(nextData.Right, p => nextData.Right = p);
                                 }
-                               
                             }
                             //If it cant overtake, set distance to 50 to check it next timer event
                             else
@@ -226,7 +245,6 @@ namespace Controller
                     {
                         if (!HasFinished(data.Right))
                         {
-
                             driverChanged = true;
                             var newDistance = data.DistanceRight - 50;
                             SectionData nextData = GetSectionData((iterator.Next ?? iterator.List.First).Value);
@@ -243,7 +261,7 @@ namespace Controller
                                 {
                                     IncreaseRondjes(nextData.Right, p => nextData.Right = p);
                                 }
-                               
+
                                 //Check if it can overtake on the right instead
                             }
                             else if (nextData.Left == null)
@@ -253,12 +271,12 @@ namespace Controller
                                 data.Right = null;
                                 data.DistanceRight = 0;
                                 RecordSectionTime(iterator.Value, nextData.Left);
-                                _laneSwitches.AddValue(new LaneSwitch(nextData.Left.Name, (iterator.Next ?? iterator.List.First).Value, Lane.Left));
+                                LaneSwitches.AddValue(new LaneSwitch(nextData.Left.Name,
+                                    (iterator.Next ?? iterator.List.First).Value, Lane.Left));
                                 if (iterator.Value.SectionType == SectionTypes.Finish)
                                 {
                                     IncreaseRondjes(nextData.Left, p => nextData.Left = p);
                                 }
-                               
                             }
                             //If it cant overtake, set distance to 50 to check it next timer event
                             else
@@ -266,14 +284,14 @@ namespace Controller
                                 data.DistanceRight = 50;
                             }
                         }
-
                     }
                 }
+
                 iterator = iterator.Previous;
             }
+
             return driverChanged;
         }
-
 
 
         public void RandomizeEquipment()
@@ -296,13 +314,13 @@ namespace Controller
             {
                 if (!equipment.IsBroken)
                 {
-                    if(equipment.Speed > 20)
+                    if (equipment.Speed > 20)
                         equipment.Speed -= 10;
                     equipment.Performance = 1;
                 }
                 else
-                { 
-                    _breakages.AddValue(new Breakage(participant.Name, section));
+                {
+                    Breakages.AddValue(new Breakage(participant.Name, section));
                 }
 
                 equipment.IsBroken = !equipment.IsBroken;
@@ -315,13 +333,15 @@ namespace Controller
             //Create copy to avoid sorting Participants itself
             var sortedParticipants = Participants;
             //Sort based on performance
-            sortedParticipants.Sort((participant1, participant2) => participant1.Equipment.Performance.CompareTo(participant2.Equipment.Performance));
+            sortedParticipants.Sort((participant1, participant2) =>
+                participant1.Equipment.Performance.CompareTo(participant2.Equipment.Performance));
             //Find finish section
             var iterator = Track.Sections.First;
             while (iterator.Value.SectionType != SectionTypes.Finish)
             {
                 iterator = iterator.Next;
             }
+
             //Move to startgrid before finish
             iterator = iterator.Previous;
             foreach (IParticipant participant in sortedParticipants)
@@ -342,7 +362,6 @@ namespace Controller
                 }
                 else if (iterator.Previous != null)
                 {
-
                     iterator = iterator.Previous;
                     data = GetSectionData(iterator.Value);
                     data.Left = participant;

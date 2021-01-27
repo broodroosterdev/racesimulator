@@ -9,14 +9,15 @@ namespace ControllerTest
     class Model_SectionTimes_BestParticipantShould
     {
         private DataRepository<SectionTime> _repo;
+
         [SetUp]
         public void Setup()
         {
             _repo = new DataRepository<SectionTime>();
             _repo.AddValue(new SectionTime() {Name = "A", Time = TimeSpan.FromSeconds(1)});
-            _repo.AddValue(new SectionTime() { Name = "A", Time = TimeSpan.FromSeconds(4) });
-            _repo.AddValue(new SectionTime() { Name = "B", Time = TimeSpan.FromSeconds(1) });
-            _repo.AddValue(new SectionTime() { Name = "B", Time = TimeSpan.FromSeconds(2) });
+            _repo.AddValue(new SectionTime() {Name = "A", Time = TimeSpan.FromSeconds(4)});
+            _repo.AddValue(new SectionTime() {Name = "B", Time = TimeSpan.FromSeconds(1)});
+            _repo.AddValue(new SectionTime() {Name = "B", Time = TimeSpan.FromSeconds(2)});
         }
 
         [Test]

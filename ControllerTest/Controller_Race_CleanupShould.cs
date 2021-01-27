@@ -11,16 +11,18 @@ namespace ControllerTest
     class Controller_Race_CleanupShould
     {
         private Race _race;
+
         [SetUp]
         public void Setup()
         {
-            var track = new Track("test", new SectionTypes[] {
-                SectionTypes.StartGrid, 
+            var track = new Track("test", new SectionTypes[]
+            {
                 SectionTypes.StartGrid,
-                SectionTypes.Finish, 
-                SectionTypes.RightCorner, 
+                SectionTypes.StartGrid,
+                SectionTypes.Finish,
                 SectionTypes.RightCorner,
-                SectionTypes.Straight, 
+                SectionTypes.RightCorner,
+                SectionTypes.Straight,
                 SectionTypes.Straight,
                 SectionTypes.Straight,
                 SectionTypes.RightCorner,
@@ -28,9 +30,9 @@ namespace ControllerTest
             });
             _race = new Race(track, new List<IParticipant>()
             {
-                new Driver(){Name = "test", Equipment = new Car()},
-                new Driver(){Name = "2test", Equipment = new Car()},
-                new Driver(){Name = "3test", Equipment = new Car()}
+                new Driver() {Name = "test", Equipment = new Car()},
+                new Driver() {Name = "2test", Equipment = new Car()},
+                new Driver() {Name = "3test", Equipment = new Car()}
             });
         }
 
@@ -52,8 +54,6 @@ namespace ControllerTest
             _race.CleanUp();
             var driversChangedEvent = Helper.GetPrivate<Race.DriversChangedEvent>(_race, "DriversChanged");
             Assert.IsNull(driversChangedEvent);
-            var raceEndedEvent = Helper.GetPrivate<Race.DriversChangedEvent>(_race, "RaceEnded");
-            Assert.IsNull(raceEndedEvent);
         }
     }
 }

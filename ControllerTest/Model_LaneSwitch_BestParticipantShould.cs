@@ -10,6 +10,7 @@ namespace ControllerTest
     class Model_LaneSwitch_BestParticipantShould
     {
         private DataRepository<LaneSwitch> _repo;
+
         [SetUp]
         public void Setup()
         {

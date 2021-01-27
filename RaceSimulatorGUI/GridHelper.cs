@@ -6,7 +6,7 @@ namespace RaceSimulatorGUI
 {
     public static class GridHelper
     {
-       public static (Bounds, List<List<SectionInfo>>) GenerateGrid(LinkedList<Section> sections)
+        public static (Bounds, List<List<SectionInfo>>) GenerateGrid(LinkedList<Section> sections)
         {
             int x = 101;
             int y = 100;
@@ -21,6 +21,7 @@ namespace RaceSimulatorGUI
             {
                 sectionList.Add(Enumerable.Repeat<SectionInfo>(null, 200).ToList());
             }
+
             LinkedListNode<Section> iterator = sections.First;
             for (int i = 0; i < sections.Count; i++)
             {
@@ -35,55 +36,56 @@ namespace RaceSimulatorGUI
                 switch (iterator.Value.SectionType)
                 {
                     case SectionTypes.LeftCorner:
+                    {
+                        if (direction == 0)
                         {
-                            if (direction == 0)
-                            {
-                                direction = 3;
-                            }
-                            else
-                            {
-                                direction--;
-                            }
+                            direction = 3;
+                        }
+                        else
+                        {
+                            direction--;
+                        }
 
-                            break;
-                        }
+                        break;
+                    }
                     case SectionTypes.RightCorner:
+                    {
+                        if (direction == 3)
                         {
-                            if (direction == 3)
-                            {
-                                direction = 0;
-                            }
-                            else
-                            {
-                                direction++;
-                            }
-                            break;
+                            direction = 0;
                         }
+                        else
+                        {
+                            direction++;
+                        }
+
+                        break;
+                    }
                 }
 
                 //Move to next tile
                 switch (direction)
                 {
                     case 0:
-                        {
-                            y++;
-                            break;
-                        }
+                    {
+                        y++;
+                        break;
+                    }
                     case 1:
-                        {
-                            x++;
-                            break;
-                        }
+                    {
+                        x++;
+                        break;
+                    }
                     case 2:
-                        {
-                            y--;
-                            break;
-                        }
+                    {
+                        y--;
+                        break;
+                    }
                     case 3:
-                        {
-                            x--;
-                            break;
-                        }
+                    {
+                        x--;
+                        break;
+                    }
                 }
 
                 //Get bounds of track
@@ -98,7 +100,7 @@ namespace RaceSimulatorGUI
 
                 iterator = iterator.Next;
             }
-            
+
             Bounds bounds = new Bounds(lowestX, lowestY, highestX, highestY);
             //Trim vertical empty tiles
             sectionList = sectionList.GetRange(lowestY, (highestY - lowestY) + 1);
@@ -107,6 +109,6 @@ namespace RaceSimulatorGUI
             //Reverse to get top of circuit at the top
             sectionList.Reverse();
             return (bounds, sectionList);
-        } 
+        }
     }
 }

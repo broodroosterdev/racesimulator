@@ -9,27 +9,31 @@ namespace RaceSimulator
     public static class Visualizer
     {
         #region graphics
+
         private static string[] _straightHorizontal =
         {
-            "--------", 
+            "--------",
             "     1  ",
             "    2   ",
             "--------",
         };
+
         private static string[] _straightVertical =
         {
-            "|     |", 
-            "| 1   |", 
-            "|   2 |", 
+            "|     |",
+            "| 1   |",
+            "|   2 |",
             "|     |"
         };
+
         private static string[] _rightHorizontal =
         {
-            "----\\  ", 
-            "     \\ ", 
-            "  2   \\", 
+            "----\\  ",
+            "     \\ ",
+            "  2   \\",
             "\\   1 |"
         };
+
         private static string[] _rightVertical =
         {
             "  /-----",
@@ -37,6 +41,7 @@ namespace RaceSimulator
             "/       ",
             "|   2 /-"
         };
+
         private static string[] _leftHorizontal =
         {
             "/     |",
@@ -44,6 +49,7 @@ namespace RaceSimulator
             "   1 / ",
             "----/  "
         };
+
         private static string[] _leftVertical =
         {
             "|   2 \\-",
@@ -51,6 +57,7 @@ namespace RaceSimulator
             " \\ 1   ",
             "  \\-----",
         };
+
         private static string[] _finishHorizontal =
         {
             "--------",
@@ -58,27 +65,31 @@ namespace RaceSimulator
             "   2  # ",
             "--------",
         };
+
         private static string[] _finishVertical =
         {
-            "|     |", 
-            "| # # |", 
-            "| 1   |", 
+            "|     |",
+            "| # # |",
+            "| 1   |",
             "|   2 |"
         };
+
         private static string[] _startHorizontal =
         {
             "--------",
-            "    1|  ", 
+            "    1|  ",
             "   2 |  ",
             "--------",
         };
+
         private static string[] _startVertical =
         {
-            "|     |", 
-            "| - - |", 
-            "| 1   |", 
+            "|     |",
+            "| - - |",
+            "| 1   |",
             "|   2 |"
         };
+
         #endregion
 
         public static void Initialize()
@@ -94,9 +105,9 @@ namespace RaceSimulator
         {
             var grid = GenerateGrid(track.Sections);
             Console.CursorVisible = false;
-            Console.SetCursorPosition(0,0);
-            Console.Write(new string(' ', Console.WindowWidth)); 
-            Console.SetCursorPosition(0,0);
+            Console.SetCursorPosition(0, 0);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, 0);
             Console.Write(track.Name);
             Console.Write("   ");
             Console.Write(Data.CurrentRace.SectionTimes.BestParticipant());
@@ -106,7 +117,7 @@ namespace RaceSimulator
                 var tiles = grid[y];
                 for (int x = tiles.Count - 1; x >= 0; x--)
                 {
-                    if(tiles[x] != null)
+                    if (tiles[x] != null)
                         //Add 1 to the y to make space for name of Track
                         DrawSection(tiles[x], x, y + 1);
                 }
@@ -120,7 +131,7 @@ namespace RaceSimulator
 
         public static void OnRaceEnded(object model)
         {
-            Data.Competition.GivePoints();    
+            Data.Competition.GivePoints();
             Data.NextRace();
             Initialize();
         }
@@ -169,7 +180,8 @@ namespace RaceSimulator
                         Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write(leftPosition);
                     Console.ForegroundColor = ConsoleColor.White;
-                } else if (character == '2')
+                }
+                else if (character == '2')
                 {
                     if (right != null && right.Equipment.IsBroken)
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -182,7 +194,7 @@ namespace RaceSimulator
                 {
                     Console.Write(character);
                 }
-            } 
+            }
         }
 
         private static string[] GetAscii(SectionTypes type, int direction)
@@ -191,142 +203,147 @@ namespace RaceSimulator
             switch (type)
             {
                 case SectionTypes.Straight:
+                {
+                    switch (direction)
                     {
-                        switch (direction)
+                        case 0:
                         {
-                            case 0:
-                            {
-                                ascii = _straightVertical;
-                                break;
-                            }
-                            case 1:
-                            {
-                                ascii = _straightHorizontal;
-                                break;
-                            }
-                            case 2:
-                            {
-                                ascii = _straightVertical.Reverse().ToArray();
-                                break;
-                            }
-                            case 3:
-                            {
-                                ascii = _straightHorizontal.Reverse().ToArray();
-                                break;
-                            }
+                            ascii = _straightVertical;
+                            break;
                         }
-                        break;
+                        case 1:
+                        {
+                            ascii = _straightHorizontal;
+                            break;
+                        }
+                        case 2:
+                        {
+                            ascii = _straightVertical.Reverse().ToArray();
+                            break;
+                        }
+                        case 3:
+                        {
+                            ascii = _straightHorizontal.Reverse().ToArray();
+                            break;
+                        }
                     }
-                case SectionTypes.LeftCorner:
-                    {
-                        switch (direction)
-                        {
-                            case 0:
-                                {
-                                    ascii = _rightHorizontal;
-                                    break;
-                                }
-                            case 1:
-                                {
-                                    ascii = _leftHorizontal;
-                                    break;
-                                }
-                            case 2:
-                                {
-                                    ascii = _leftVertical;
-                                    break;
-                                }
-                            case 3:
-                                {
-                                    ascii = _rightVertical;
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-                case SectionTypes.RightCorner:
-                    {
-                        switch (direction)
-                        {
-                            case 0:
-                                {
-                                    ascii = _rightVertical;
-                                    break;
-                                }
-                            case 1:
-                                {
-                                    ascii = _rightHorizontal;
-                                    break;
-                                }
-                            case 2:
-                                {
-                                    ascii = _leftHorizontal;
-                                    break;
-                                }
-                            case 3:
-                                {
-                                    ascii = _leftVertical;
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-                case SectionTypes.StartGrid:
-                    {
-                        switch (direction)
-                        {
-                            case 0:
-                            {
-                                ascii = _startVertical;
-                                break;
-                            }
-                            case 1:
-                            {
-                                ascii = _startHorizontal;
-                                break;
-                            }
-                            case 2:
-                            {
-                                ascii = _startVertical.Reverse().ToArray();
-                                break;
-                            }
-                            case 3:
-                            {
-                                ascii = _startHorizontal.Reverse().ToArray();
-                                break;
-                            }
-                        }
 
-                        break;
-                    }
-                case SectionTypes.Finish:
+                    break;
+                }
+                case SectionTypes.LeftCorner:
+                {
+                    switch (direction)
                     {
-                        switch (direction)
+                        case 0:
                         {
-                            case 0:
-                            {
-                                ascii = _finishVertical;
-                                break;
-                            }
-                            case 1:
-                            {
-                                ascii = _finishHorizontal;
-                                break;
-                            }
-                            case 2:
-                            {
-                                ascii = _finishVertical.Reverse().ToArray();
-                                break;
-                            }
-                            case 3:
-                            {
-                                ascii = _finishHorizontal.Reverse().ToArray();
-                                break;
-                            }
+                            ascii = _rightHorizontal;
+                            break;
                         }
-                        break;
+                        case 1:
+                        {
+                            ascii = _leftHorizontal;
+                            break;
+                        }
+                        case 2:
+                        {
+                            ascii = _leftVertical;
+                            break;
+                        }
+                        case 3:
+                        {
+                            ascii = _rightVertical;
+                            break;
+                        }
                     }
+
+                    break;
+                }
+                case SectionTypes.RightCorner:
+                {
+                    switch (direction)
+                    {
+                        case 0:
+                        {
+                            ascii = _rightVertical;
+                            break;
+                        }
+                        case 1:
+                        {
+                            ascii = _rightHorizontal;
+                            break;
+                        }
+                        case 2:
+                        {
+                            ascii = _leftHorizontal;
+                            break;
+                        }
+                        case 3:
+                        {
+                            ascii = _leftVertical;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+                case SectionTypes.StartGrid:
+                {
+                    switch (direction)
+                    {
+                        case 0:
+                        {
+                            ascii = _startVertical;
+                            break;
+                        }
+                        case 1:
+                        {
+                            ascii = _startHorizontal;
+                            break;
+                        }
+                        case 2:
+                        {
+                            ascii = _startVertical.Reverse().ToArray();
+                            break;
+                        }
+                        case 3:
+                        {
+                            ascii = _startHorizontal.Reverse().ToArray();
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+                case SectionTypes.Finish:
+                {
+                    switch (direction)
+                    {
+                        case 0:
+                        {
+                            ascii = _finishVertical;
+                            break;
+                        }
+                        case 1:
+                        {
+                            ascii = _finishHorizontal;
+                            break;
+                        }
+                        case 2:
+                        {
+                            ascii = _finishVertical.Reverse().ToArray();
+                            break;
+                        }
+                        case 3:
+                        {
+                            ascii = _finishHorizontal.Reverse().ToArray();
+                            break;
+                        }
+                    }
+
+                    break;
+                }
             }
+
             return ascii;
         }
 
@@ -345,6 +362,7 @@ namespace RaceSimulator
             {
                 sectionList.Add(Enumerable.Repeat<SectionInfo>(null, 200).ToList());
             }
+
             LinkedListNode<Section> iterator = sections.First;
             for (int i = 0; i < sections.Count; i++)
             {
@@ -359,55 +377,56 @@ namespace RaceSimulator
                 switch (iterator.Value.SectionType)
                 {
                     case SectionTypes.LeftCorner:
+                    {
+                        if (direction == 0)
                         {
-                            if (direction == 0)
-                            {
-                                direction = 3;
-                            }
-                            else
-                            {
-                                direction--;
-                            }
+                            direction = 3;
+                        }
+                        else
+                        {
+                            direction--;
+                        }
 
-                            break;
-                        }
+                        break;
+                    }
                     case SectionTypes.RightCorner:
+                    {
+                        if (direction == 3)
                         {
-                            if (direction == 3)
-                            {
-                                direction = 0;
-                            }
-                            else
-                            {
-                                direction++;
-                            }
-                            break;
+                            direction = 0;
                         }
+                        else
+                        {
+                            direction++;
+                        }
+
+                        break;
+                    }
                 }
 
                 //Move to next tile
                 switch (direction)
                 {
                     case 0:
-                        {
-                            y++;
-                            break;
-                        }
+                    {
+                        y++;
+                        break;
+                    }
                     case 1:
-                        {
-                            x++;
-                            break;
-                        }
+                    {
+                        x++;
+                        break;
+                    }
                     case 2:
-                        {
-                            y--;
-                            break;
-                        }
+                    {
+                        y--;
+                        break;
+                    }
                     case 3:
-                        {
-                            x--;
-                            break;
-                        }
+                    {
+                        x--;
+                        break;
+                    }
                 }
 
                 //Get bounds of track
@@ -422,6 +441,7 @@ namespace RaceSimulator
 
                 iterator = iterator.Next;
             }
+
             //Trim vertical empty tiles
             sectionList = sectionList.GetRange(lowestY, (highestY - lowestY) + 1);
             //Trim horizontal empty tiles

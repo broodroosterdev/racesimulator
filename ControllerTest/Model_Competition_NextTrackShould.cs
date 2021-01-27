@@ -44,7 +44,7 @@ namespace ControllerTest
         public void TwoInQueue_ReturnNextTrack()
         {
             var spa = new Track("Spa", new LinkedList<Section>());
-            var assen = new Track("Assen", new LinkedList<Section>()); 
+            var assen = new Track("Assen", new LinkedList<Section>());
             _competition.Tracks.Enqueue(spa);
             _competition.Tracks.Enqueue(assen);
             Assert.AreEqual(spa, _competition.NextTrack());

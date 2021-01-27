@@ -23,10 +23,13 @@ namespace RaceSimulatorGUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private CompetitionStatsWindow competitionWindow;
-        private RaceStatsWindow raceWindow; 
+        private CompetitionStatsWindow _competitionWindow;
+        private CompetitionStatsData _competitionStatsData;
+        private RaceStatsWindow _raceWindow;
+
         public MainWindow()
         {
+            _competitionStatsData = new CompetitionStatsData();
             Data.Initialize();
             Data.NextRace();
             InitializeComponent();
@@ -40,11 +43,13 @@ namespace RaceSimulatorGUI
             Data.CurrentRace.RaceEnded += CurrentRaceOnRaceEnded;
             Data.CurrentRace.Start();
         }
-        
+
 
         private void CurrentRaceOnRaceEnded(object model)
         {
-            Data.Competition.GivePoints();    
+            Console.WriteLine("Race ended");
+            Data.Competition.GivePoints();
+            Console.WriteLine(Data.Competition.Points.GetData());
             Data.NextRace();
             Initialize();
         }
@@ -58,7 +63,6 @@ namespace RaceSimulatorGUI
                     Screen.Source = null;
                     Screen.Source = Renderer.DrawTrack(Data.CurrentRace.Track);
                 }));
-            
         }
 
 
@@ -69,14 +73,14 @@ namespace RaceSimulatorGUI
 
         private void MenuItem_Race_OnClick(object sender, RoutedEventArgs e)
         {
-            raceWindow = new RaceStatsWindow();
-            raceWindow.Show();
+            _raceWindow = new RaceStatsWindow();
+            _raceWindow.Show();
         }
-        
+
         private void MenuItem_Competition_OnClick(object sender, RoutedEventArgs e)
         {
-            competitionWindow = new CompetitionStatsWindow();
-            competitionWindow.Show();
+            _competitionWindow = new CompetitionStatsWindow(_competitionStatsData);
+            _competitionWindow.Show();
         }
     }
 }

@@ -7,20 +7,21 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
-        <local:MainWindowData x:Key="Data"/>
+        <local:MainWindowData x:Key="Data" />
     </Window.Resources>
     <Grid
         Background="Black">
-        <DockPanel >
+        <DockPanel>
             <Menu VerticalAlignment="Top" Height="20" DockPanel.Dock="Top">
                 <MenuItem Header="Menu">
-                    <MenuItem Header="View Race Stats" Click="MenuItem_Race_OnClick"/>
-                    <MenuItem Header="View Competition Stats" Click="MenuItem_Competition_OnClick"/>
-                    <MenuItem Header="Exit" Click="MenuItem_Exit_OnClick"/>
+                    <MenuItem Header="View Race Stats" Click="MenuItem_Race_OnClick" />
+                    <MenuItem Header="View Competition Stats" Click="MenuItem_Competition_OnClick" />
+                    <MenuItem Header="Exit" Click="MenuItem_Exit_OnClick" />
                 </MenuItem>
             </Menu>
         </DockPanel>
         <Image Margin="0 20 0 0" x:Name="Screen" />
-        <Label VerticalAlignment="Top"  HorizontalAlignment="Right" Width="60" Height="30" Foreground="White" Margin="0 20 0 0" Content="{Binding Source={StaticResource Data}, Path=TrackName}"/>
+        <Label VerticalAlignment="Top" HorizontalAlignment="Right" Width="60" Height="30" Foreground="White"
+               Margin="0 20 0 0" Content="{Binding Source={StaticResource Data}, Path=TrackName}" />
     </Grid>
 </Window>
